@@ -1,7 +1,7 @@
 from engine.entity_component import Visual, Position
-from engine.system_camera import Camera
-from engine.system_player_control import Controlable
-from engine.sys_physics import Physics, CollisionBox
+from engine.systems.camera import Camera
+from engine.systems.player_control import Controlable
+from engine.systems.physics import Physics, CollisionBox
 
 import pygame
 

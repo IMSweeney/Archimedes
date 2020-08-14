@@ -1,19 +1,18 @@
 from engine import system
 from engine import entity_component
 from engine.entity_component import Position, Vector2D
-from engine.sys_physics import Physics
+from engine.systems.physics import Physics
 
 from engine import logger
 _logger = logger.Logger(__name__)
 
 
 class PlayerControler(system.System):
-    def __init__(self, ec_manager):
+    def __init__(self):
         super().__init__(
             set(['UpdateEvent', 'KeyDownEvent', 'KeyUpEvent']),
             set([Position, Physics, Controlable])
         )
-        self.ec_manager = ec_manager
         self.move_keys = {
             100: Vector2D(1, 0),
             97: Vector2D(-1, 0),
@@ -41,7 +40,7 @@ class PlayerControler(system.System):
 
 
 class Controlable(entity_component.Component):
-    def __init__(self, force=100):
+    def __init__(self, force=80):
         self.force = force
 
 

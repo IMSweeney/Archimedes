@@ -9,13 +9,12 @@ _logger = logger.Logger(__name__)
 
 
 class CameraManager(system.System):
-    def __init__(self, event_manager, ec_manager):
+    def __init__(self, event_manager):
         super().__init__(
             set(['UpdateEvent']),
             set([Camera, Position])
         )
         self.event_manager = event_manager
-        self.ec_manager = ec_manager
         self.last_position = Vector2D(0, 0)
 
     def process(self, e):

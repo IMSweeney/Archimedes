@@ -1,11 +1,16 @@
+import math
+
 
 class SpatialHash():
     def __init__(self, size):
         self.table = {}
         self.size = size
 
-    def add_obj(self, obj):
-        h_key = self.hash_location(obj.tile_location)
+    def clear(self):
+        self.table = {}
+
+    def add_obj(self, obj, location):
+        h_key = self.hash_location(location)
         self.add_obj_to_bin(obj, h_key)
 
     def add_obj_to_bin(self, obj, h_key):
@@ -13,15 +18,15 @@ class SpatialHash():
             self.table[h_key] = set()
         self.table[h_key].add(obj)
 
-    def update_location(self, obj):
-        h_key_old = self.hash_location(obj.old_tile_location)
-        h_key_new = self.hash_location(obj.tile_location)
-        if h_key_old != h_key_new:
-            self.remove_obj(obj, h_key_old)
-            self.add_obj_to_bin(obj, h_key_new)
+    # def update_location(self, obj):
+    #     h_key_old = self.hash_location(obj.old_tile_location)
+    #     h_key_new = self.hash_location(obj.tile_location)
+    #     if h_key_old != h_key_new:
+    #         self.remove_obj(obj, h_key_old)
+    #         self.add_obj_to_bin(obj, h_key_new)
 
-    def remove_obj(self, obj, h_key):
-        self.table[h_key].discard(obj)
+    # def remove_obj(self, obj, h_key):
+    #     self.table[h_key].discard(obj)
 
     def get_objs_from_point(self, point):
         h_key = self.hash_location(point)
@@ -48,8 +53,8 @@ class SpatialHash():
         return list(objs)
 
     def hash_location(self, location):
-        x = int(location[0] / self.size)
-        y = int(location[1] / self.size)
+        x = math.floor(location.x / self.size)
+        y = math.floor(location.y / self.size)
         return (x, y)
 
     def __contains__(self, obj):

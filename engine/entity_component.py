@@ -40,9 +40,12 @@ class EntityComponentManager():
         self.database.insert(0, component_type, None)
 
     def get_entities_with_component_set(self, component_set):
-        entities = self.database[list(component_set)]
-        entities = entities.dropna(how='any')
-        return entities
+        try:
+            entities = self.database[list(component_set)]
+            entities = entities.dropna(how='any')
+            return entities
+        except KeyError:  # if none of the components have an entity
+            return {}
 
     # def get_entity_components_from_ids(self, ids):
     #     return self.database.loc[ids].to_dict(orient='records')
@@ -66,6 +69,9 @@ class Vector2D(Component):
     def __init__(self, x, y):
         self.x = x
         self.y = y
+
+    def to_tuple(self):
+        return (self.x, self.y)
 
     def __sub__(self, other):
         return Vector2D(self.x - other.x, self.y - other.y)

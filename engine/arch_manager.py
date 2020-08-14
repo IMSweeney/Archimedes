@@ -27,6 +27,12 @@ class ArchManager():
 
     def add_system(self, sys):
         self.system_manager.add_system(sys)
+        self.add_entities_to_system(sys)
+
+    def add_entities_to_system(self, sys):
+        entities = self.ec_manager.get_entities_with_component_set(sys.component_types)
+        for guid, components in entities.items():
+            sys.add_entity(guid, components)
 
     def start(self, max_framerate=60):
         pg_clock = Clock()
