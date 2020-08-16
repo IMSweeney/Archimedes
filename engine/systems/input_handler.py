@@ -36,6 +36,7 @@ class InputHandler(system.System):
             elif pygame_event.type == pygame.locals.VIDEORESIZE:
                 e = WindowResizeEvent(pygame_event.size)
                 self.event_manager.push_event(e)
+                _logger.info(e)
 
 
 class KeyEvent(event.Event):

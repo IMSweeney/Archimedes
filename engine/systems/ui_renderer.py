@@ -11,7 +11,7 @@ import pygame
 class UIRenderer(system.System):
     def __init__(self, window):
         super().__init__(
-            set('WindowResizeEvent'),
+            set(['WindowResizeEvent']),
             set([UITransform, Visual, UIConstraints])
         )
         self.window = window
@@ -21,6 +21,8 @@ class UIRenderer(system.System):
     def process(self, e):
         if e.type == 'WindowResizeEvent':
             self.win_size = Vector2D(e.size[0], e.size[1])
+            for eid, components in self.entities.items():
+                components['UITransform'].dirty = True
 
     def render(self):
         for guid, components in self.entities.items():
@@ -28,8 +30,8 @@ class UIRenderer(system.System):
 
     def render_entity(self, entity):
         if entity['UITransform'].dirty:
-            self.calculate_transform(entity)
             self.scale_element(entity)
+            self.calculate_transform(entity)
             entity['UITransform'].dirty = False
 
         surface = entity['Visual'].surface
@@ -41,14 +43,19 @@ class UIRenderer(system.System):
         transform = entity['UITransform']
         if not constraints.parentid:
             parent_pos = Vector2D(0, 0)
+            parent_size = self.win_size
         else:
             parent = self.entities[constraints.parentid]
             parent_pos = parent['UITransform'].position
+            parent_size = parent['UITransform'].size
 
-        transform.position = parent_pos + constraints.relative_pos
+        max_pos = parent_pos + parent_size - transform.size
+        transform.position = (
+            parent_pos + constraints.relative_pos * max_pos)
 
     def scale_element(self, entity):
         constraints = entity['UIConstraints']
+        transform = entity['UITransform']
         visual = entity['Visual']
         if not constraints.parentid:
             parent_size = self.win_size
@@ -60,24 +67,28 @@ class UIRenderer(system.System):
         if size < constraints.minimum_size:
             raise InvalidResizeError()
 
+        transform.size = size
         visual.surface = pygame.transform.scale(
             visual.surface, size.to_tuple(asint=True)
         )
 
 
 class UITransform(Position):
-    def __init__(self, x, y):
-        super().__init__(x, y)
+    def __init__(self):
+        super().__init__(0, 0)
         self.size = Vector2D(0, 0)
         self.dirty = True
 
 
 class UIConstraints(entity_component.Component):
-    def __init__(self, parentid=None):
+    def __init__(self, parentid=None,
+                 relative_pos=Vector2D(0, 0),
+                 relative_size=Vector2D(.2, .2),
+                 minimum_size=Vector2D(0, 0)):
         self.parentid = parentid
-        self.relative_pos = Vector2D(0, 0)
-        self.relative_size = Vector2D(.2, .2)
-        self.minimum_size = Vector2D(20, 20)
+        self.relative_pos = relative_pos
+        self.relative_size = relative_size
+        self.minimum_size = minimum_size
 
 
 class InvalidResizeError(ValueError):

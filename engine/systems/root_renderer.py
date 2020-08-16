@@ -21,10 +21,13 @@ class RootRenderer(system.System):
         self.window = pygame.display.set_mode(
             self.win_size, flags=pygame.RESIZABLE
         )
-        self.window.fill((250, 250, 250))
+        self.clear_surface()
 
         self.add_subsystem(WorldRenderer(self.window))
         self.add_subsystem(UIRenderer(self.window))
+
+    def clear_surface(self):
+        self.window.fill((0, 0, 0))
 
     def process(self, e):
         if e.type == 'WindowQuitEvent':
@@ -35,6 +38,7 @@ class RootRenderer(system.System):
             self.win_size = e.size
 
     def render(self):
+        self.clear_surface()
         for sys in self.subsystems:
             sys.render()
         pygame.display.flip()

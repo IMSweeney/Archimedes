@@ -14,11 +14,14 @@ class WorldRenderer(system.System):
         self.window = window
         self.win_size = window.get_size()
         self.tile_size = tile_size
-        self.win_transform = Vector2D(
-            self.win_size[0] / 2,
-            self.win_size[1] / 2
-        )
+        self.win_transform = self.calc_window_transform(self.win_size)
         self.camera_location = Vector2D(0, 0)
+
+    def calc_window_transform(self, size):
+        return Vector2D(
+            size[0] / 2,
+            size[1] / 2
+        )
 
     def process(self, e):
         if e.type == 'UpdateEvent':
@@ -27,6 +30,7 @@ class WorldRenderer(system.System):
             self.move_camera(e)
         elif e.type == 'WindowResizeEvent':
             self.win_size = e.size
+            self.win_transform = self.calc_window_transform(e.size)
 
     def move_camera(self, e):
         self.camera_location = e.position
