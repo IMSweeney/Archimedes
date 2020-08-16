@@ -1,4 +1,5 @@
-from engine.systems.ui_renderer import UIPosition, Visual
+from engine.systems.ui_renderer import UITransform, UIConstraints
+from engine.entity_component import Visual
 
 import pygame
 
@@ -12,8 +13,9 @@ class UIGenerator():
         surface = pygame.Surface(size).convert()
         e = self.arch_manager.add_entity()
         components = [
-            Visual(surface, size),
-            UIPosition(160, 0),
+            Visual(surface),
+            UITransform(160, 0),
+            UIConstraints()
         ]
         for component in components:
             self.arch_manager.attach_component(e, component)

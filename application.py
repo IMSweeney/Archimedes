@@ -1,11 +1,9 @@
 from engine import arch_manager
 from engine.systems.input_handler import InputHandler
-from engine.systems.world_renderer import WorldRenderer
 from engine.systems.root_renderer import RootRenderer
 from engine.systems.camera import CameraManager
 from engine.systems.player_control import PlayerControler
 from engine.systems.physics import PhysicsHandler
-from engine.systems.ui_renderer import UIRenderer
 
 from engine import tilefactory
 from engine import uifactory
@@ -17,11 +15,9 @@ class Game():
         event_manager = self.arch_manager.event_manager
         # ec_manager = self.arch_manager.ec_manager
 
-        root_renderer = RootRenderer(event_manager)
-
         self.arch_manager.add_systems([
             InputHandler(event_manager),
-            root_renderer,
+            RootRenderer(event_manager),
             CameraManager(event_manager),
             PlayerControler(),
             PhysicsHandler(),

@@ -45,7 +45,7 @@ class WorldGenerator():
 
         e = self.arch_manager.add_entity()
         components = [
-            Visual(surface, size),
+            Visual(surface),
             Position(location[0], location[1])
         ]
         for component in components:
@@ -62,7 +62,7 @@ class WorldGenerator():
 
         e = self.arch_manager.add_entity()
         components = [
-            Visual(surface, size),
+            Visual(surface),
             Camera(),
             Position(0, 0),
             Controlable(),

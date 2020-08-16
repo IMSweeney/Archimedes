@@ -12,7 +12,7 @@ _logger = logger.Logger(__name__)
 class RootRenderer(system.System):
     def __init__(self, event_manager):
         super().__init__(
-            set(['UpdateEvent', 'WindowQuitEvent']),
+            set(['UpdateEvent', 'WindowQuitEvent', 'WindowResizeEvent']),
             set()
         )
         self.event_manager = event_manager
@@ -31,6 +31,8 @@ class RootRenderer(system.System):
             exit()
         elif e.type == 'UpdateEvent':
             self.render()
+        elif e.type == 'WindowResizeEvent':
+            self.win_size = e.size
 
     def render(self):
         for sys in self.subsystems:

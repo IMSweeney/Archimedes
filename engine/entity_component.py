@@ -70,8 +70,11 @@ class Vector2D(Component):
         self.x = x
         self.y = y
 
-    def to_tuple(self):
-        return (self.x, self.y)
+    def to_tuple(self, asint=False):
+        if not asint:
+            return (self.x, self.y)
+        else:
+            return (int(self.x), int(self.y))
 
     def __sub__(self, other):
         return Vector2D(self.x - other.x, self.y - other.y)
@@ -80,7 +83,19 @@ class Vector2D(Component):
         return Vector2D(self.x + other.x, self.y + other.y)
 
     def __mul__(self, other):
-        return Vector2D(self.x * other, self.y * other)
+        if isinstance(other, Vector2D):
+            return Vector2D(self.x * other.x, self.y * other.y)
+        else:
+            return Vector2D(self.x * other, self.y * other)
+
+    def __rmul__(self, other):
+        self.__mul__(other)
+
+    def __lt__(self, other):
+        return self.x < other.x and self.y < other.y
+
+    def __gt__(self, other):
+        return self.x > other.x or self.y > other.y
 
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
@@ -89,12 +104,11 @@ class Vector2D(Component):
         return '({:.2f}, {:.2f})'.format(self.x, self.y)
 
 
-class Position():
+class Position(Component):
     def __init__(self, x, y):
         self.position = Vector2D(x, y)
 
 
 class Visual(Component):
-    def __init__(self, surface, size):
+    def __init__(self, surface):
         self.surface = surface
-        self.size = size

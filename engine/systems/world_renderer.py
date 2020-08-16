@@ -8,7 +8,7 @@ _logger = logger.Logger(__name__)
 class WorldRenderer(system.System):
     def __init__(self, window, tile_size=32):
         super().__init__(
-            set(['CameraMoveEvent']),
+            set(['CameraMoveEvent', 'WindowResizeEvent']),
             set([Visual, Position])
         )
         self.window = window
@@ -25,6 +25,8 @@ class WorldRenderer(system.System):
             self.render_entities()
         elif e.type == 'CameraMoveEvent':
             self.move_camera(e)
+        elif e.type == 'WindowResizeEvent':
+            self.win_size = e.size
 
     def move_camera(self, e):
         self.camera_location = e.position

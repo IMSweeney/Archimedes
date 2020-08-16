@@ -24,13 +24,17 @@ class InputHandler(system.System):
                 e = KeyDownEvent(
                     pygame_event.key,
                     pygame_event.mod)
-                _logger.info(e)
+                # _logger.info(e)
                 self.event_manager.push_event(e)
 
             elif pygame_event.type == pygame.locals.KEYUP:
                 e = KeyUpEvent(
                     pygame_event.key,
                     pygame_event.mod)
+                self.event_manager.push_event(e)
+
+            elif pygame_event.type == pygame.locals.VIDEORESIZE:
+                e = WindowResizeEvent(pygame_event.size)
                 self.event_manager.push_event(e)
 
 
@@ -55,6 +59,12 @@ class WindowQuitEvent(event.Event):
     def __init__(self, event_info={}):
         self.type = self.__class__.__name__
         self.info = event_info
+
+
+class WindowResizeEvent(event.Event):
+    def __init__(self, size):
+        self.type = self.__class__.__name__
+        self.size = size
 
 
 if __name__ == '__main__':

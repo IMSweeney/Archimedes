@@ -74,8 +74,6 @@ class PhysicsHandler(system.System):
         d = entity['Physics'].damping
         entity['Physics'].velocity -= (entity['Physics'].velocity * d * dt)
         entity['Physics'].velocity += (entity['Physics'].applied_forces * dt)
-        # entity['Position'].position += (entity['Physics'].velocity * dt)
-        # _logger.info(entity['Position'].position)
 
     def update_pos(self, guid, entity, dt):
         NUM_STEPS = 16

@@ -23,7 +23,6 @@ class PlayerControler(system.System):
     def process(self, e):
         if e.type == 'UpdateEvent':
             for guid, components in self.entities.items():
-                # self.update_vel_pos(components, e.dt / 1000)
                 pass
 
         elif e.type == 'KeyDownEvent':
