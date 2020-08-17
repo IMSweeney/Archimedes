@@ -1,0 +1,74 @@
+class Node():
+    def __init__(self, guid, data, parent=None):
+        self.parent = parent
+        self.guid = guid
+        self.data = data
+        self.children = []
+
+    def add_element(self, guid, data, parentid):
+        if self.guid == parentid:
+            node = Node(guid, data, parent=self)
+            self.children.append(node)
+        for child in self.children:
+            child.add_element(guid, data, parentid)
+
+    def remove_element(self, guid):
+        for child in self.children:
+            if child.guid == guid:
+                self.children.pop(child)
+                return
+            child.remove_element(guid)
+
+    def __repr__(self):
+        return 'id: {}, {} children'.format(
+            self.guid, len(self.children))
+
+    def show_tree(self, level=0):
+        print('{}{}'.format("." * level, self.guid))
+        for node in self.children:
+            node.show_tree(level + 2)
+
+
+class Tree(Node):
+    def __init__(self):
+        self.guid = -1
+        self.data = None
+        self.children = []
+
+    def add_element(self, guid, data, parentid=None):
+        if not parentid:
+            node = Node(guid, data)
+            self.children.append(node)
+        super().add_element(guid, data, parentid)
+
+    def __iter__(self):
+        return DepthFirst(self.children)
+
+
+class DepthFirst():
+    def __init__(self, elements):
+        self.stack = elements.copy()
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if not self.stack:
+            raise StopIteration
+        node = self.stack.pop()
+        self.stack += node.children
+        return node
+
+
+if __name__ == '__main__':
+    t = Tree()
+    t.add_element(1, '1')
+    t.add_element(2, '2')
+    t.add_element(10, '10', parentid=2)
+
+    t.show_tree()
+    for e in t:
+        print(e)
+
+    for e in t:
+        print(e)
