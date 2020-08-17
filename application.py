@@ -4,6 +4,7 @@ from engine.systems.root_renderer import RootRenderer
 from engine.systems.camera import CameraManager
 from engine.systems.player_control import PlayerControler
 from engine.systems.physics import PhysicsHandler
+from engine.systems.ui_interaction import UIInteraction
 
 from engine import tilefactory
 from engine import uifactory
@@ -21,12 +22,13 @@ class Game():
             CameraManager(event_manager),
             PlayerControler(),
             PhysicsHandler(),
+            UIInteraction()
         ])
         world_generator = tilefactory.WorldGenerator(
             self.arch_manager,
             tile_size=32
         )
-        world_generator.generate_random_map(20)
+        world_generator.generate_random_map(40)
         world_generator.generate_player()
 
         ui_generator = uifactory.UIGenerator(self.arch_manager)

@@ -1,5 +1,6 @@
-from engine.systems.ui_renderer import UITransform, UIConstraints
 from engine.entity_component import Visual, Vector2D
+from engine.systems.ui_renderer import UITransform, UIConstraints
+from engine.systems.ui_interaction import Clickable, Selectable
 
 from engine import logger
 _logger = logger.Logger(__name__)
@@ -10,8 +11,8 @@ import pygame
 class UIGenerator():
     def __init__(self, arch_manager):
         self.arch_manager = arch_manager
-        alpha = 255
-        self.bg_color = (50, 230, 210, alpha)
+        self.alpha = 100
+        self.bg_color = (50, 230, 210)
 
     def generate_ui_elements(self):
         e = self.generate_base_ui_element()
@@ -21,6 +22,7 @@ class UIGenerator():
         size = (100, 100)
         surface = pygame.Surface(size).convert()
         surface.fill(self.bg_color)
+        surface.set_alpha(self.alpha)
         e = self.arch_manager.add_entity()
         components = [
             Visual(surface),
@@ -44,7 +46,8 @@ class UIGenerator():
                 parentid=parentid,
                 # relative_pos=Vector2D(.2, .2),
                 # relative_size=Vector2D(.2, .2),
-            )
+            ),
+            Selectable()
         ]
         for component in components:
             self.arch_manager.attach_component(e, component)

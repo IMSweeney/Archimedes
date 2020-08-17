@@ -2,7 +2,7 @@ from engine import system
 from engine import event
 
 import pygame
-import pygame.locals
+from pygame.locals import *
 
 from engine import logger
 _logger = logger.Logger(__name__)
@@ -16,27 +16,37 @@ class InputHandler(system.System):
 
     def process(self, e):
         for pygame_event in pygame.event.get():
-            if pygame_event.type == pygame.locals.QUIT:
+            if pygame_event.type == QUIT:
                 e = WindowQuitEvent()
                 self.event_manager.push_event(e)
 
-            elif pygame_event.type == pygame.locals.KEYDOWN:
+            elif pygame_event.type == KEYDOWN:
                 e = KeyDownEvent(
                     pygame_event.key,
                     pygame_event.mod)
                 # _logger.info(e)
                 self.event_manager.push_event(e)
 
-            elif pygame_event.type == pygame.locals.KEYUP:
+            elif pygame_event.type == KEYUP:
                 e = KeyUpEvent(
                     pygame_event.key,
                     pygame_event.mod)
                 self.event_manager.push_event(e)
 
-            elif pygame_event.type == pygame.locals.VIDEORESIZE:
+            elif pygame_event.type == VIDEORESIZE:
                 e = WindowResizeEvent(pygame_event.size)
                 self.event_manager.push_event(e)
                 _logger.info(e)
+
+            elif pygame_event.type in [MOUSEBUTTONDOWN,
+                                       MOUSEBUTTONUP]:
+                e = MouseButtonEvent(
+                    pygame_event.pos,
+                    pygame_event.button,
+                    pygame_event.type == MOUSEBUTTONDOWN
+                )
+                self.event_manager.push_event(e)
+                # _logger.info(e)
 
 
 class KeyEvent(event.Event):
@@ -66,6 +76,14 @@ class WindowResizeEvent(event.Event):
     def __init__(self, size):
         self.type = self.__class__.__name__
         self.size = size
+
+
+class MouseButtonEvent(event.Event):
+    def __init__(self, pos, button, press):
+        self.type = self.__class__.__name__
+        self.pos = pos
+        self.button = button
+        self.press = press
 
 
 if __name__ == '__main__':
