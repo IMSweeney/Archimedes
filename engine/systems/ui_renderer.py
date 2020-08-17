@@ -1,6 +1,7 @@
 from engine import system
 from engine import entity_component
 from engine.entity_component import Visual, Vector2D, Position
+from engine.structures.tree import Tree
 
 from engine import logger
 _logger = logger.Logger(__name__)
@@ -17,35 +18,47 @@ class UIRenderer(system.System):
         self.window = window
         size = window.get_size()
         self.win_size = Vector2D(size[0], size[1])
+        self.entities = Tree()
+
+    def add_entity(self, entityid, components):
+        entity = {
+            comp.__class__.__name__: comp for comp in components
+        }
+        parentid = components['UIConstraints'].parentid
+        self.entities.add_element(entityid, entity, parentid=parentid)
+        # _logger.info('added {}'.format(entityid))
+
+    def remove_entity(self, entityid):
+        self.entities.remove_element(entityid)
 
     def process(self, e):
         if e.type == 'WindowResizeEvent':
             self.win_size = Vector2D(e.size[0], e.size[1])
-            for eid, components in self.entities.items():
-                components['UITransform'].dirty = True
+            for entity in self.entities:
+                entity.data['UITransform'].dirty = True
 
     def render(self):
-        for guid, components in self.entities.items():
-            self.render_entity(components)
+        for node in self.entities:
+            self.render_entity(node.data, node)
 
-    def render_entity(self, entity):
+    def render_entity(self, entity, node):
         if entity['UITransform'].dirty:
-            self.scale_element(entity)
-            self.calculate_transform(entity)
+            self.scale_element(entity, node)
+            self.calculate_transform(entity, node)
             entity['UITransform'].dirty = False
 
         surface = entity['Visual'].surface
         px_pos = entity['UITransform'].position.to_tuple()
         self.window.blit(surface, px_pos)
 
-    def calculate_transform(self, entity):
+    def calculate_transform(self, entity, node):
         constraints = entity['UIConstraints']
         transform = entity['UITransform']
-        if not constraints.parentid:
+        if not node.parent:
             parent_pos = Vector2D(0, 0)
             parent_size = self.win_size
         else:
-            parent = self.entities[constraints.parentid]
+            parent = node.parent.data
             parent_pos = parent['UITransform'].position
             parent_size = parent['UITransform'].size
 
@@ -53,14 +66,14 @@ class UIRenderer(system.System):
         transform.position = (
             parent_pos + constraints.relative_pos * max_pos)
 
-    def scale_element(self, entity):
+    def scale_element(self, entity, node):
         constraints = entity['UIConstraints']
         transform = entity['UITransform']
         visual = entity['Visual']
-        if not constraints.parentid:
+        if not node.parent:
             parent_size = self.win_size
         else:
-            parent = self.entities[constraints.parentid]
+            parent = node.parent.data
             parent_size = parent['UITransform'].size
 
         size = constraints.relative_size * parent_size
