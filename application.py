@@ -5,6 +5,7 @@ from engine.systems.camera import CameraManager
 from engine.systems.player_control import PlayerControler
 from engine.systems.physics import PhysicsHandler
 from engine.systems.ui_interaction import UIInteraction
+from engine.systems.text_renderer import TextRenderer
 
 from engine import tilefactory
 from engine import uifactory
@@ -22,7 +23,8 @@ class Game():
             CameraManager(event_manager),
             PlayerControler(),
             PhysicsHandler(),
-            UIInteraction()
+            UIInteraction(),
+            TextRenderer(),
         ])
         world_generator = tilefactory.WorldGenerator(
             self.arch_manager,

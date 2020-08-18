@@ -26,7 +26,7 @@ class UIRenderer(system.System):
         }
         parentid = components['UIConstraints'].parentid
         self.entities.add_element(entityid, entity, parentid=parentid)
-        # _logger.info('added {}'.format(entityid))
+        _logger.info('added {}'.format(entityid))
 
     def remove_entity(self, entityid):
         self.entities.remove_element(entityid)
@@ -70,6 +70,10 @@ class UIRenderer(system.System):
         constraints = entity['UIConstraints']
         transform = entity['UITransform']
         visual = entity['Visual']
+
+        if not constraints.relative_size:
+            return
+
         if not node.parent:
             parent_size = self.win_size
         else:
@@ -87,16 +91,16 @@ class UIRenderer(system.System):
 
 
 class UITransform(Position):
-    def __init__(self):
-        super().__init__(0, 0)
-        self.size = Vector2D(0, 0)
+    def __init__(self, x=0, y=0, size=(0, 0)):
+        super().__init__(x, y)
+        self.size = Vector2D(size[0], size[1])
         self.dirty = True
 
 
 class UIConstraints(entity_component.Component):
     def __init__(self, parentid=None,
                  relative_pos=Vector2D(0, 0),
-                 relative_size=Vector2D(.2, .2),
+                 relative_size=None,
                  minimum_size=Vector2D(0, 0)):
         self.parentid = parentid
         self.relative_pos = relative_pos
