@@ -13,13 +13,19 @@ class ArchManager():
         self.ec_manager = entity_component.EntityComponentManager()
         self.system_manager = system.SystemManager()
 
-    def add_entity(self):
+    def generate_new_entity_id(self):
         eid = self.ec_manager.create_entity()
         return eid
 
     def attach_component(self, entid, comp):
         components = self.ec_manager.attach_component(entid, comp)
         self.system_manager.add_entity_to_systems(entid, components)
+
+    def create_entity(self, components):
+        eid = self.generate_new_entity_id()
+        for comp in components:
+            self.attach_component(eid, comp)
+        return eid
 
     def add_systems(self, systems):
         for sys in systems:

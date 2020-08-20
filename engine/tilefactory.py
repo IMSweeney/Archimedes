@@ -2,6 +2,7 @@ from engine.entity_component import Visual, Position
 from engine.systems.camera import Camera
 from engine.systems.player_control import Controlable
 from engine.systems.physics import Physics, CollisionBox
+from engine.systems.ui_interaction import Clickable
 
 import pygame
 
@@ -43,16 +44,14 @@ class WorldGenerator():
         }[tile_type]
         surface.fill(color)
 
-        e = self.arch_manager.add_entity()
         components = [
             Visual(surface),
             Position(location[0], location[1])
         ]
-        for component in components:
-            self.arch_manager.attach_component(e, component)
         if tile_type == 'water':
-            box = CollisionBox()
-            self.arch_manager.attach_component(e, box)
+            components.append(CollisionBox())
+
+        self.arch_manager.create_entity(components)
 
     def generate_player(self):
         size = (self.tile_size, self.tile_size)
@@ -60,7 +59,6 @@ class WorldGenerator():
         surface = pygame.image.load(sprite).convert_alpha()
         surface = pygame.transform.smoothscale(surface, size)
 
-        e = self.arch_manager.add_entity()
         components = [
             Visual(surface),
             Camera(),
@@ -69,8 +67,7 @@ class WorldGenerator():
             Physics(),
             CollisionBox(size=0.6),
         ]
-        for component in components:
-            self.arch_manager.attach_component(e, component)
+        self.arch_manager.create_entity(components)
 
 
 if __name__ == '__main__':

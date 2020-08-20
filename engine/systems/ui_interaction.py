@@ -44,9 +44,5 @@ class Selectable(Clickable):
         self.state = False
 
 
-class InvalidResizeError(ValueError):
-    pass
-
-
 if __name__ == '__main__':
     pass

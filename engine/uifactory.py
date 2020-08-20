@@ -27,22 +27,19 @@ class UIGenerator():
         surface = pygame.Surface(size).convert()
         surface.fill(self.bg_color)
         surface.set_alpha(self.alpha)
-        e = self.arch_manager.add_entity()
         components = [
             Visual(surface),
             UITransform(),
             UIConstraints(relative_pos=Vector2D(1, 1),
                           relative_size=Vector2D(.2, .2))
         ]
-        for component in components:
-            self.arch_manager.attach_component(e, component)
-        return e
+        eid = self.arch_manager.create_entity(components)
+        return eid
 
     def child_ui_element(self, parentid):
         size = (100, 100)
         surface = pygame.Surface(size).convert()
         surface.fill((250, 250, 250))
-        e = self.arch_manager.add_entity()
         components = [
             Visual(surface),
             UITransform(),
@@ -53,14 +50,12 @@ class UIGenerator():
             ),
             Selectable()
         ]
-        for component in components:
-            self.arch_manager.attach_component(e, component)
+        self.arch_manager.create_entity(components)
 
     def gen_fps_element(self):
         txt = 'FPS: '
         surface = self.font.render(txt, True, self.font_color)
         size = self.font.size(txt)
-        e = self.arch_manager.add_entity()
         components = [
             Visual(surface),
             UITransform(size=size),
@@ -70,8 +65,7 @@ class UIGenerator():
             ),
             Text(form='FPS: {:.0f}', txt=0),
         ]
-        for component in components:
-            self.arch_manager.attach_component(e, component)
+        self.arch_manager.create_entity(components)
 
 
 if __name__ == '__main__':
