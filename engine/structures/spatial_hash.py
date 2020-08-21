@@ -9,6 +9,13 @@ class SpatialHash():
     def clear(self):
         self.table = {}
 
+    def add_obj_by_box(self, obj, ll_bound, ur_bound):
+        h1 = self.hash_location(ll_bound)
+        h2 = self.hash_location(ur_bound)
+        for i in range(h1[0], h2[0] + 1):
+            for j in range(h1[1], h2[1] + 1):
+                self.add_obj_to_bin(obj, (i, j))
+
     def add_obj(self, obj, location):
         h_key = self.hash_location(location)
         self.add_obj_to_bin(obj, h_key)
@@ -31,7 +38,7 @@ class SpatialHash():
     def get_objs_from_point(self, point):
         h_key = self.hash_location(point)
         if h_key in self.table:
-            return self.table[h_key]
+            return list(self.table[h_key])
         else:
             return []
 
@@ -53,13 +60,12 @@ class SpatialHash():
         return list(objs)
 
     def hash_location(self, location):
-        x = math.floor(location.x / self.size)
-        y = math.floor(location.y / self.size)
+        x = int(location.x / self.size)
+        y = int(location.y / self.size)
         return (x, y)
 
     def __contains__(self, obj):
-        h_key = self.hash_location(obj.old_tile_location)
-        return h_key in self.table and obj in self.table[h_key]
+        return obj in self.get_objs()
 
     def __repr__(self):
         msg = 'Bin size: {}\n'.format(self.size)

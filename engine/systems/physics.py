@@ -17,41 +17,36 @@ class CollisionHandler(system.System):
 
     def regenerate_hash(self):
         self.hash.clear()
-        for guid, components in self.entities.items():
-            self.hash.add_obj(guid, components['Position'].position)
+        for guid in self.entities:
+            ll, ur = self.ll_ur_from_guid(guid)
+            self.hash.add_obj_by_box(guid, ll, ur)
 
     def get_collisions(self, entityid):
         if entityid not in self.entities:
             _logger.error('Entity {} not tracked'.format(entityid))
 
-        pos = self.entities[entityid]['Position'].position
-        box = self.entities[entityid]['CollisionBox']
-        l, r, t, b = self.lrtb_from_pos_box(pos, box)
+        ll, ur = self.ll_ur_from_guid(entityid)
 
         possible_collisions = self.get_possible_collisions(entityid)
         for guid in possible_collisions:
             if guid == entityid:
                 continue
-            components = self.entities[guid]
-            pos = components['Position'].position
-            box = components['CollisionBox']
-            lo, ro, to, bo = self.lrtb_from_pos_box(pos, box)
-            if l < ro and r > lo and b < to and t > bo:
+            llo, uro = self.ll_ur_from_guid(guid)
+            if ((ll.x < uro.x and ur.x > llo.x) and
+                    (ll.y < uro.y and ur.y > llo.y)):
                 return True
         return False
 
     def get_possible_collisions(self, entityid):
+        ll, ur = self.ll_ur_from_guid(entityid)
+        return self.hash.get_objs_from_bounds(ll, ur)
+
+    def ll_ur_from_guid(self, entityid):
         pos = self.entities[entityid]['Position'].position
         box = self.entities[entityid]['CollisionBox']
-        return self.hash.get_objs_from_bounds(
-            pos + box.ll_bound * 4,
-            pos + box.ur_bound * 4
-        )
-
-    def lrtb_from_pos_box(self, position, box):
-        ll = position + box.ll_bound
-        ur = position + box.ur_bound
-        return ll.x, ur.x, ur.y, ll.y
+        ll = pos + box.ll_bound
+        ur = pos + box.ur_bound
+        return ll, ur
 
 
 class PhysicsHandler(system.System):
@@ -60,7 +55,7 @@ class PhysicsHandler(system.System):
             set(['UpdateEvent']),
             set([Position, Physics])
         )
-        self.collision_handler = CollisionHandler(4)
+        self.collision_handler = CollisionHandler(2)
         self.add_subsystem(self.collision_handler)
 
     def process(self, e):
