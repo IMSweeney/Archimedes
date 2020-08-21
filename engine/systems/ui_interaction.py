@@ -1,7 +1,5 @@
 from engine import system
-from engine import entity_component
-from engine.entity_component import Vector2D
-from engine.systems.ui_renderer import UITransform
+from engine.components.components import *
 
 from engine import logger
 _logger = logger.Logger(__name__)
@@ -32,16 +30,6 @@ class UIInteraction(system.System):
         is_gt_ul = mouse_pos.x > ul.x and mouse_pos.y > ul.y
         is_lt_lr = mouse_pos.x < lr.x and mouse_pos.y < lr.y
         return is_lt_lr and is_gt_ul
-
-
-class Clickable(entity_component.Component):
-    def __init__(self):
-        pass
-
-
-class Selectable(Clickable):
-    def __init__(self):
-        self.state = False
 
 
 if __name__ == '__main__':

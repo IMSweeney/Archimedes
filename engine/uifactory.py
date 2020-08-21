@@ -1,7 +1,4 @@
-from engine.entity_component import Visual, Vector2D
-from engine.systems.ui_renderer import UITransform, UIConstraints
-from engine.systems.ui_interaction import Clickable, Selectable
-from engine.systems.text_renderer import Text
+from engine.components.components import *
 
 from engine import logger
 _logger = logger.Logger(__name__)
@@ -15,7 +12,7 @@ class UIGenerator():
         self.alpha = 100
         self.bg_color = (50, 230, 210)
         self.font = pygame.font.SysFont(None, 14)
-        self.font_color = (0, 0, 0)
+        self.font_color = (255, 255, 255)
 
     def generate_ui_elements(self):
         e = self.generate_base_ui_element()
@@ -63,7 +60,7 @@ class UIGenerator():
                 relative_pos=Vector2D(1, 0),
                 # relative_size=Vector2D(.2, .2),
             ),
-            Text(form='FPS: {:.0f}', txt=0),
+            Text(form='FPS: {:.0f}', txt=0, color=self.font_color),
         ]
         self.arch_manager.create_entity(components)
 

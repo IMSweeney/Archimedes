@@ -1,6 +1,5 @@
 from engine import system
-from engine import entity_component
-from engine.entity_component import Position, Vector2D
+from engine.components.components import *
 from engine.structures.spatial_hash import SpatialHash
 
 from engine import logger
@@ -95,23 +94,6 @@ class PhysicsHandler(system.System):
                 pos.y = old_y
                 v.y = 0
                 break
-
-
-class Physics(entity_component.Component):
-    def __init__(self, damping=10):
-        self.damping = damping
-        self.velocity = Vector2D(0, 0)
-        self.applied_forces = Vector2D(0, 0)
-
-
-class CollisionBox(entity_component.Component):
-    def __init__(self, size=1):
-        self.ll_bound = Vector2D(-size / 2, -size / 2)
-        self.ur_bound = Vector2D(size / 2, size / 2)
-        self.center = Vector2D(0, 0)
-
-    def __repr__(self):
-        return '{}, {}'.format(self.ll_bound, self.ur_bound)
 
 
 if __name__ == '__main__':

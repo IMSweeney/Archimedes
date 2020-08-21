@@ -1,6 +1,5 @@
 from engine import system
-from engine import entity_component
-from engine.entity_component import Visual, Vector2D, Position
+from engine.components.components import *
 from engine.structures.tree import Tree
 
 from engine import logger
@@ -88,24 +87,6 @@ class UIRenderer(system.System):
         visual.surface = pygame.transform.scale(
             visual.surface, size.to_tuple(asint=True)
         )
-
-
-class UITransform(Position):
-    def __init__(self, x=0, y=0, size=(0, 0)):
-        super().__init__(x, y)
-        self.size = Vector2D(size[0], size[1])
-        self.dirty = True
-
-
-class UIConstraints(entity_component.Component):
-    def __init__(self, parentid=None,
-                 relative_pos=Vector2D(0, 0),
-                 relative_size=None,
-                 minimum_size=Vector2D(0, 0)):
-        self.parentid = parentid
-        self.relative_pos = relative_pos
-        self.relative_size = relative_size
-        self.minimum_size = minimum_size
 
 
 class InvalidResizeError(ValueError):

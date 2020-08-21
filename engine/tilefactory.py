@@ -1,8 +1,4 @@
-from engine.entity_component import Visual, Position
-from engine.systems.camera import Camera
-from engine.systems.player_control import Controlable
-from engine.systems.physics import Physics, CollisionBox
-from engine.systems.ui_interaction import Clickable
+from engine.components.components import *
 
 import pygame
 
@@ -66,6 +62,7 @@ class WorldGenerator():
             Controlable(),
             Physics(),
             CollisionBox(size=0.6),
+            Selectable(),
         ]
         self.arch_manager.create_entity(components)
 

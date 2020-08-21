@@ -1,6 +1,5 @@
 from engine import system
-from engine import entity_component
-from engine.entity_component import Vector2D, Visual
+from engine.components.components import *
 
 from engine import logger
 _logger = logger.Logger(__name__)
@@ -51,24 +50,6 @@ class TextRenderer(system.System):
         entity['Visual'].surface = surface
         entity['UITransform'].size = Vector2D(size[0], size[1])
         entity['UITransform'].dirty = True
-
-
-class Text(entity_component.Component):
-    def __init__(self, form='{}', txt=''):
-        self.format_str = form
-        self.text = txt
-        self.dirty = True
-        self.style = TextStyle()
-
-
-class TextStyle(entity_component.Component):
-    def __init__(self, color=(0, 0, 0)):
-        self.color = color
-
-
-class Watcher(entity_component.Component):
-    def __init__(self, event):
-        self.event = event
 
 
 if __name__ == '__main__':

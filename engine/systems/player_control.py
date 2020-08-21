@@ -1,7 +1,5 @@
 from engine import system
-from engine import entity_component
-from engine.entity_component import Position, Vector2D
-from engine.systems.physics import Physics
+from engine.components.components import *
 
 from engine import logger
 _logger = logger.Logger(__name__)
@@ -36,11 +34,6 @@ class PlayerControler(system.System):
                 for guid, components in self.entities.items():
                     components['Physics'].applied_forces -= (
                         self.move_keys[e.key_code] * components['Controlable'].force)
-
-
-class Controlable(entity_component.Component):
-    def __init__(self, force=80):
-        self.force = force
 
 
 if __name__ == '__main__':

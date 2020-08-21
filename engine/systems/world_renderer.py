@@ -1,5 +1,5 @@
 from engine import system
-from engine.entity_component import Visual, Position, Vector2D
+from engine.components.components import *
 
 from engine import logger
 _logger = logger.Logger(__name__)

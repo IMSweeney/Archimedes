@@ -1,8 +1,6 @@
 from engine import system
 from engine import event
-from engine import entity_component
-
-from engine.entity_component import Position, Vector2D
+from engine.components.components import *
 
 from engine import logger
 _logger = logger.Logger(__name__)
@@ -30,8 +28,3 @@ class CameraMoveEvent(event.Event):
     def __init__(self, position):
         self.type = self.__class__.__name__
         self.position = position
-
-
-class Camera(entity_component.Component):
-    def __init__(self):
-        pass
