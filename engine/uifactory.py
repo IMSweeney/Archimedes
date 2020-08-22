@@ -19,6 +19,20 @@ class UIGenerator():
         self.child_ui_element(e)
         self.gen_fps_element()
 
+        components = [
+            Visual(pygame.Surface((20, 20)).convert()),
+            UITransform(),
+            UIConstraints(
+                relative_pos=Vector2D(0, 0)
+            ),
+            Selectable(),
+            Text(txt=(
+                'I am a long line of text with line breaks.\n' +
+                'And a little extra')
+            ),
+        ]
+        self.arch_manager.create_entity(components)
+
     def generate_base_ui_element(self):
         size = (100, 100)
         surface = pygame.Surface(size).convert()

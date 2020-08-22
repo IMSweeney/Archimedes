@@ -74,8 +74,18 @@ class TextStyle(Component):
 
 
 class Watcher(Component):
-    def __init__(self, event):
+    def __init__(self, comp, cfield, event, efield):
+        self.comp = comp
+        self.comp_field = cfield
         self.event = event
+        self.event_field = efield
+
+
+class Linker(Component):
+    def __init__(self, comp, entityid, delay=None):
+        self.comp = comp
+        self.watched_entity = entityid
+        self.delay = delay
 
 
 class Clickable(Component):

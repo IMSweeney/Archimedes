@@ -43,12 +43,27 @@ class TextRenderer(system.System):
         if not text_comp.dirty:
             return
 
-        txt = text_comp.format_str.format(text_comp.text)
+        # text_comp.dirty = False
         color = text_comp.style.color
-        surface = self.font.render(txt, True, color)
-        size = self.font.size(txt)
+        txt = text_comp.format_str.format(text_comp.text)
+        lines = txt.split('\n')
+        surfaces = []
+        size = Vector2D(0, 0)
+        for line in lines:
+            line_surface = self.font.render(line, True, color)
+            surfaces.append(line_surface)
+            line_size = self.font.size(line)
+            size.x = max(size.x, line_size[0])
+            size.y += line_size[1]
+
+        surface = pygame.Surface(size.to_tuple(), pygame.SRCALPHA)
+        line_height = size.y / len(lines)
+        for i, line in enumerate(surfaces):
+            surface.blit(
+                line, (0, i * line_height))
+
         entity['Visual'].surface = surface
-        entity['UITransform'].size = Vector2D(size[0], size[1])
+        entity['UITransform'].size = size
         entity['UITransform'].dirty = True
 
 

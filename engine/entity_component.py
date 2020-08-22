@@ -47,8 +47,11 @@ class EntityComponentManager():
         except KeyError:  # if none of the components have an entity
             return {}
 
-    # def get_entity_components_from_ids(self, ids):
-    #     return self.database.loc[ids].to_dict(orient='records')
+    def get_entity_components_from_ids(self, ids):
+        return self.database.loc[ids].to_dict(orient='records')
+
+    def get_entity(self, eid):
+        return self.database.loc[eid].to_dict(orient='records')
 
 
 class EntityManager():

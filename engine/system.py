@@ -33,6 +33,7 @@ class SystemManager():
         if event_type in self.event_listeners:
             return self.event_listeners[event_type]
         else:
+            _logger.warning('No watchers for event {}'.format(event_type))
             return []
 
     def add_entity_to_systems(self, entityid, components):
