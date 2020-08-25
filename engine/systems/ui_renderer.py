@@ -64,6 +64,7 @@ class UIRenderer(system.System):
         max_pos = parent_pos + parent_size - transform.size
         transform.position = (
             parent_pos + constraints.relative_pos * max_pos)
+        _logger.info([max_pos, transform.position])
 
     def scale_element(self, entity, node):
         constraints = entity['UIConstraints']
