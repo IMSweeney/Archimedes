@@ -143,5 +143,14 @@ class UIConstraints(Component):
         self.minimum_size = minimum_size
 
 
+class Hoverable(Component):
+    def __init__(self, on_delay=0.5, off_delay=0.5):
+        self.state = False
+        self.is_hovered = False
+        self.timer = 0
+        self.on_delay = on_delay
+        self.off_delay = off_delay
+
+
 if __name__ == '__main__':
     pass

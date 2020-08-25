@@ -30,6 +30,7 @@ class UIGenerator():
                 'I am a long line of text with line breaks.\n' +
                 'And a little extra')
             ),
+            Hoverable()
         ]
         self.arch_manager.create_entity(components)
 

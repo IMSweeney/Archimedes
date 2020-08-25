@@ -1,6 +1,8 @@
 from engine import system
 from engine.components.components import *
 
+from engine.systems.hover_system import HoverSystem
+
 from engine import logger
 _logger = logger.Logger(__name__)
 
@@ -11,6 +13,8 @@ class UIInteraction(system.System):
             set(['MouseButtonEvent']),
             set([UITransform, Selectable])
         )
+
+        self.add_subsystem(HoverSystem())
 
     def process(self, e):
         if e.type == 'MouseButtonEvent':

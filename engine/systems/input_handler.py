@@ -48,6 +48,13 @@ class InputHandler(system.System):
                 self.event_manager.push_event(e)
                 # _logger.info(e)
 
+            elif pygame_event.type in [MOUSEMOTION]:
+                e = MouseMotionEvent(
+                    pygame_event.pos,
+                )
+                self.event_manager.push_event(e)
+                # _logger.info(e)
+
 
 class KeyEvent(event.Event):
     def __init__(self, key_code, mod):
@@ -84,6 +91,12 @@ class MouseButtonEvent(event.Event):
         self.pos = pos
         self.button = button
         self.press = press
+
+
+class MouseMotionEvent(event.Event):
+    def __init__(self, pos):
+        self.type = self.__class__.__name__
+        self.pos = pos
 
 
 if __name__ == '__main__':
