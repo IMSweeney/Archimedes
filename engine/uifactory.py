@@ -18,7 +18,7 @@ class UIGenerator():
         self.font_color = (255, 255, 255)
 
     def generate_ui_elements(self):
-        e = self.generate_empty_ui((400, 150))
+        e = self.generate_empty_ui((200, 50))
         self.gen_fps_element()
 
         components = [
@@ -45,9 +45,9 @@ class UIGenerator():
                          bg.get_rect(), self.border_thickness)
         components = [
             Visual(bg),
-            UITransform(),
+            UITransform(size=bg.get_size()),
             UIConstraints(
-                relative_pos=Vector2D(.5, 0)
+                relative_pos=Vector2D(.5, 0),
             ),
         ]
         eid = self.arch_manager.create_entity(components)

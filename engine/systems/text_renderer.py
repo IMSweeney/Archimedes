@@ -17,7 +17,7 @@ class TextRenderer(system.System):
         )
         self.fps_window = 10
         self.tick_lengths = queue.Queue(maxsize=self.fps_window)
-        self.font = pygame.font.SysFont(None, 18)
+        self.font = pygame.font.SysFont('timesnewroman', 14)
 
     def process(self, e):
         if e.type == 'UpdateEvent':
@@ -40,8 +40,13 @@ class TextRenderer(system.System):
 
     def render(self, entity):
         text_comp = entity['Text']
-        if not text_comp.dirty:
-            return
+        # if not text_comp.dirty:
+        #     return
+
+        if text_comp.format_str == '{}':
+            text_comp.text = '{}\n{}'.format(
+                entity['UITransform'].position, entity['UITransform'].size
+            )
 
         # text_comp.dirty = False
         color = text_comp.style.color

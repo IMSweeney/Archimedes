@@ -28,7 +28,7 @@ class Vector2D(Component):
             return Vector2D(self.x * other, self.y * other)
 
     def __rmul__(self, other):
-        self.__mul__(other)
+        return self.__mul__(other)
 
     def __lt__(self, other):
         return self.x < other.x and self.y < other.y
@@ -136,11 +136,13 @@ class UIConstraints(Component):
     def __init__(self, parentid=None,
                  relative_pos=Vector2D(0, 0),
                  relative_size=None,
-                 minimum_size=Vector2D(0, 0)):
+                 minimum_size=Vector2D(0, 0),
+                 buffer_px=4):
         self.parentid = parentid
         self.relative_pos = relative_pos
         self.relative_size = relative_size
         self.minimum_size = minimum_size
+        self.buffer_px = Vector2D(buffer_px, buffer_px)
 
 
 class Hoverable(Component):
