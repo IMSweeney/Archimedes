@@ -68,7 +68,10 @@ class Text(Component):
         self.format_str = form
         self.text = txt
         self.dirty = True
+        self.wrap = True
         self.style = TextStyle(color)
+        self.surface = None
+        self.size = Vector2D(0, 0)
 
 
 class TextStyle(Component):
@@ -160,6 +163,20 @@ class Hoverable(Component):
 class Scrollable(Component):
     def __init__(self):
         self.dragable = False
+        self.position = Vector2D(0, 0)
+
+
+# class Clip(Component):
+#     def __init__(self):
+#         self.position = Vector2D(0, 0)
+#         self.size = Vector2D(0, 0)
+#         self.src_image = None
+
+#     def to_tuple(self):
+#         return (
+#             self.position.x, self.position.y,
+#             self.size.x, self.size.y
+#         )
 
 
 class FPSDisplay(Component):

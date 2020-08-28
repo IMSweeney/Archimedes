@@ -47,14 +47,7 @@ class UIRenderer(system.System):
             self.calculate_transform(entity, node)
             entity['UITransform'].dirty = False
 
-        # if node.parent:
-        #     parent_surface = node.parent.data['Visual'].surface
-        # else:
-        #     parent_surface = self.window
-
-        surface = entity['Visual'].surface
-        px_pos = entity['UITransform'].position.to_tuple()
-        self.window.blit(surface, px_pos)
+        self.draw_entity(entity, node)
 
     def calculate_transform(self, entity, node):
         constraints = entity['UIConstraints']
@@ -96,6 +89,11 @@ class UIRenderer(system.System):
             visual.surface = pygame.transform.scale(
                 visual.surface, size.to_tuple(asint=True)
             )
+
+    def draw_entity(self, entity, node):
+        surface = entity['Visual'].surface
+        px_pos = entity['UITransform'].position
+        self.window.blit(surface, px_pos.to_tuple())
 
 
 class InvalidResizeError(ValueError):

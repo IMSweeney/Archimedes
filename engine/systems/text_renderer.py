@@ -22,58 +22,87 @@ class TextRenderer(system.System):
                 self.render(components)
 
     def render(self, entity):
+        if entity['Text'].dirty:
+            self.generate_text_surface(entity)
+            entity['Text'].dirty = False
+
+        self.clip_text_surface(entity)
+
+    def generate_text_surface(self, entity):
         text_comp = entity['Text']
-        if not text_comp.dirty:
-            return
+        parent_size = self.get_parent_transform(entity).size
 
-        parent_size = self.get_parent_size(entity)
-
-        text_comp.dirty = False
         color = text_comp.style.color
+
         txt = text_comp.format_str.format(text_comp.text)
 
-        lines = txt.split('\n')
+        if text_comp.wrap:
+            lines = self.split_text_by_max_width(txt, parent_size.x)
+        else:
+            lines = txt.split('\n')
+
         surfaces = []
         size = Vector2D(0, 0)
+        for line in lines:
+            line_surface = self.font.render(line, True, color)
+            line_size = line_surface.get_rect().size
+            surfaces.append(line_surface)
+            size.x = max(size.x, line_size[0])
+            size.y += line_size[1]
+
+        surface = pygame.Surface(size.to_tuple(), pygame.SRCALPHA)
+        line_height = size.y / len(lines)
+        for i, line in enumerate(surfaces):
+            surface.blit(line, (0, i * line_height))
+
+        entity['Text'].surface = surface
+        entity['Text'].size = size
+        entity['UITransform'].dirty = True
+
+    def split_text_by_max_width(self, text, max_width):
+        truncated_lines = []
+        lines = text.split('\n')
         for line in lines:
             words = line.split(' ')
             truncated_line = ''
             for word in words:
                 next_width = self.font.size(truncated_line + word)[0]
-                if next_width > parent_size.x:
-                    line_surface = self.font.render(line, True, color)
-                    line_size = line_surface.get_rect().size
-                    surfaces.append(line_surface)
-                    size.x = max(size.x, line_size[0])
-                    size.y += line_size[1]
+                if next_width > max_width:
+                    truncated_lines.append(truncated_line)
                     truncated_line = ''
                 else:
-                    truncated_line += word
+                    truncated_line += ' ' + word
 
             if truncated_line != '':
-                line_surface = self.font.render(line, True, color)
-                line_size = line_surface.get_rect().size
+                truncated_lines.append(truncated_line)
+        return truncated_lines
 
-                surfaces.append(line_surface)
-                size.x = max(size.x, line_size[0])
-                size.y += line_size[1]
+    def clip_text_surface(self, entity):
+        text_comp = entity['Text']
+        transform = entity['UITransform']
+        visual = entity['Visual']
+        parent = self.get_parent_transform(entity)
 
-        surface = pygame.Surface(size.to_tuple(), pygame.SRCALPHA)
-        line_height = size.y / len(lines)
-        for i, line in enumerate(surfaces):
-            surface.blit(
-                line, (0, i * line_height))
+        clip = parent.size - (transform.position - parent.position)
+        transform.size = clip
 
-        entity['Visual'].surface = surface
-        entity['UITransform'].size = size
-        entity['UITransform'].dirty = True
+        if 'Scrollable' in entity:
+            scroll_pos = entity['Scrollable'].position.to_tuple()
+        else:
+            scroll_pos = Vector2D(0, 0)
 
-    def get_parent_size(self, entity):
+        visual.surface = pygame.Surface(clip.to_tuple(), pygame.SRCALPHA)
+        visual.surface.blit(
+            text_comp.surface, (0, 0),
+            (scroll_pos.x, scroll_pos.y, clip.x, clip.y)
+        )
+
+    def get_parent_transform(self, entity):
         pid = entity['UIConstraints'].parentid
         if pid:
-            return self.ec_manager.get_entity(pid)['UITransform'].size
+            return self.ec_manager.get_entity(pid)['UITransform']
         else:
-            return Vector2D(100, 100)  # Hack for window as parent
+            return None
 
 
 if __name__ == '__main__':

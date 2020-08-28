@@ -18,9 +18,9 @@ class UIGenerator():
         self.font_color = (255, 255, 255)
 
     def generate_ui_elements(self):
-        self.gen_fps_element()
-        self.generate_top_element()
-        self.gen_entity_table()
+        # self.gen_fps_element()
+        self.gen_top_element()
+        # self.gen_entity_table()
 
     def generate_empty_ui(self, pos=Vector2D(0, 0),
                           size=None, parentid=None):
@@ -59,7 +59,7 @@ class UIGenerator():
         ]
         self.arch_manager.create_entity(components)
 
-    def generate_top_element(self):
+    def gen_top_element(self):
         e = self.generate_empty_ui(
             pos=Vector2D(.5, 0),
             size=Vector2D(.3, .1)
@@ -74,7 +74,7 @@ class UIGenerator():
             ),
             Selectable(),
             Text(txt=(
-                'I am a long line of text with line breaks.\n' +
+                'I am a long line of text with line breaks. ' +
                 'And a little extra\n' +
                 'a\n' +
                 'a\n' +
