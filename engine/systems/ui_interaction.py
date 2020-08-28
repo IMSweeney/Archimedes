@@ -9,14 +9,15 @@ _logger = logger.Logger(__name__)
 
 
 class UIInteraction(system.System):
-    def __init__(self):
+    def __init__(self, ec_manager):
         super().__init__(
             set(['MouseButtonEvent']),
             set([UITransform, Selectable])
         )
+        self.ec_manager = ec_manager
 
         self.add_subsystem(HoverSystem())
-        self.add_subsystem(ScrollSystem())
+        self.add_subsystem(ScrollSystem(ec_manager))
 
     def process(self, e):
         if e.type == 'MouseButtonEvent':

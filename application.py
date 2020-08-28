@@ -24,7 +24,7 @@ class Game():
             CameraManager(event_manager),
             PlayerControler(),
             PhysicsHandler(),
-            UIInteraction(),
+            UIInteraction(ec_manager),
             TextRenderer(ec_manager),
             FPSSystem(),
         ])

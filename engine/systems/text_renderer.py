@@ -36,7 +36,7 @@ class TextRenderer(system.System):
 
         txt = text_comp.format_str.format(text_comp.text)
 
-        if text_comp.wrap:
+        if text_comp.wrap and parent_size.x != 0:
             lines = self.split_text_by_max_width(txt, parent_size.x)
         else:
             lines = txt.split('\n')
@@ -82,12 +82,16 @@ class TextRenderer(system.System):
         transform = entity['UITransform']
         visual = entity['Visual']
         parent = self.get_parent_transform(entity)
+        if parent.size.x == 0:
+            visual.surface = text_comp.surface
+            visual.size = text_comp.size
+            return
 
         clip = parent.size - (transform.position - parent.position)
         transform.size = clip
 
         if 'Scrollable' in entity:
-            scroll_pos = entity['Scrollable'].position.to_tuple()
+            scroll_pos = entity['Scrollable'].position
         else:
             scroll_pos = Vector2D(0, 0)
 
@@ -102,7 +106,7 @@ class TextRenderer(system.System):
         if pid:
             return self.ec_manager.get_entity(pid)['UITransform']
         else:
-            return None
+            return UITransform()
 
 
 if __name__ == '__main__':

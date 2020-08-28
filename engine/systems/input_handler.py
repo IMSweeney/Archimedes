@@ -46,7 +46,7 @@ class InputHandler(system.System):
                     pygame_event.type == MOUSEBUTTONDOWN
                 )
                 self.event_manager.push_event(e)
-                _logger.info(e)
+                # _logger.info(e)
 
             elif pygame_event.type in [MOUSEMOTION]:
                 e = MouseMotionEvent(
