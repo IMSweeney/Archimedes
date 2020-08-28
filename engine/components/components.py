@@ -3,6 +3,9 @@ class Component():
     def __init__(self):
         raise NotImplementedError()
 
+    def __repr__(self):
+        return str(vars(self))
+
 
 class Vector2D(Component):
     def __init__(self, x, y):

@@ -29,10 +29,10 @@ class Node():
             node.show_tree(level + 2)
 
     def __iter__(self):
+        yield self
         for child in self.children:
             for node in child:
                 yield node
-        yield self
 
     def __contains__(self, item):
         if self.guid == item:

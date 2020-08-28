@@ -22,7 +22,8 @@ class UIGenerator():
         self.generate_top_element()
         self.gen_entity_table()
 
-    def generate_empty_ui(self, pos=Vector2D(0, 0), size=None):
+    def generate_empty_ui(self, pos=Vector2D(0, 0),
+                          size=None, parentid=None):
         base_size = (200, 200)
         bg = pygame.Surface(base_size).convert()
         bg.fill(self.bg_color)
@@ -33,6 +34,7 @@ class UIGenerator():
             Visual(bg),
             UITransform(size=base_size),
             UIConstraints(
+                parentid=parentid,
                 relative_pos=pos,
                 relative_size=size
             ),
@@ -94,7 +96,7 @@ class UIGenerator():
                 relative_pos=Vector2D(0, 0),
                 # relative_size=Vector2D(.2, .2),
             ),
-            Text(form='FPS: {:.0f}', txt=0, color=self.font_color),
+            Text(form='FPS: {:.0f}', txt=0),
             FPSDisplay(),
         ]
         self.arch_manager.create_entity(components)

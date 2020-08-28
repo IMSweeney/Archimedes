@@ -20,12 +20,13 @@ class UIRenderer(system.System):
         self.entities = Tree()
 
     def add_entity(self, entityid, components):
+        if entityid in self.entities:
+            return
         entity = {
             comp.__class__.__name__: comp for comp in components
         }
         parentid = components['UIConstraints'].parentid
         self.entities.add_element(entityid, entity, parentid=parentid)
-        _logger.info('added {}'.format(entityid))
 
     def remove_entity(self, entityid):
         self.entities.remove_element(entityid)
@@ -45,6 +46,11 @@ class UIRenderer(system.System):
             self.scale_element(entity, node)
             self.calculate_transform(entity, node)
             entity['UITransform'].dirty = False
+
+        # if node.parent:
+        #     parent_surface = node.parent.data['Visual'].surface
+        # else:
+        #     parent_surface = self.window
 
         surface = entity['Visual'].surface
         px_pos = entity['UITransform'].position.to_tuple()
@@ -73,23 +79,23 @@ class UIRenderer(system.System):
         transform = entity['UITransform']
         visual = entity['Visual']
 
-        if not constraints.relative_size:
-            return
-
         if not node.parent:
             parent_size = self.win_size
         else:
             parent = node.parent.data
             parent_size = parent['UITransform'].size
 
-        size = constraints.relative_size * parent_size
-        if size < constraints.minimum_size:
-            raise InvalidResizeError()
+        if not constraints.relative_size:
+            pass
+        else:
+            size = constraints.relative_size * parent_size
+            if size < constraints.minimum_size:
+                raise InvalidResizeError()
 
-        transform.size = size
-        visual.surface = pygame.transform.scale(
-            visual.surface, size.to_tuple(asint=True)
-        )
+            transform.size = size
+            visual.surface = pygame.transform.scale(
+                visual.surface, size.to_tuple(asint=True)
+            )
 
 
 class InvalidResizeError(ValueError):
