@@ -25,7 +25,7 @@ class UIRenderer(system.System):
         entity = {
             comp.__class__.__name__: comp for comp in components
         }
-        parentid = components['UIConstraints'].parentid
+        parentid = entity['UIConstraints'].parentid
         self.entities.add_element(entityid, entity, parentid=parentid)
 
     def remove_entity(self, entityid):
@@ -93,7 +93,12 @@ class UIRenderer(system.System):
     def draw_entity(self, entity, node):
         surface = entity['Visual'].surface
         px_pos = entity['UITransform'].position
-        self.window.blit(surface, px_pos.to_tuple())
+        if not surface:
+            _logger.warning('surface not initialized for {}'.format(
+                node.guid)
+            )
+        else:
+            self.window.blit(surface, px_pos.to_tuple())
 
 
 class InvalidResizeError(ValueError):

@@ -20,7 +20,7 @@ class UIGenerator():
     def generate_ui_elements(self):
         self.gen_fps_element()
         self.gen_top_element()
-        self.gen_entity_table()
+        # self.gen_entity_table()
 
     def generate_empty_ui(self, pos=Vector2D(0, 0),
                           size=None, parentid=None):

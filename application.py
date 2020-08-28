@@ -7,6 +7,7 @@ from engine.systems.physics import PhysicsHandler
 from engine.systems.ui_interaction import UIInteraction
 from engine.systems.text_renderer import TextRenderer
 from engine.systems.FPS_system import FPSSystem
+from engine.systems.debugger import EntityViewer
 
 from engine import tilefactory
 from engine import uifactory
@@ -27,6 +28,7 @@ class Game():
             UIInteraction(ec_manager),
             TextRenderer(ec_manager),
             FPSSystem(),
+            EntityViewer(self.arch_manager),
         ])
         world_generator = tilefactory.WorldGenerator(
             self.arch_manager,

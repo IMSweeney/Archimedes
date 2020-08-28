@@ -5,6 +5,7 @@ class Component():
 
     def __repr__(self):
         return str(vars(self))
+        # return self.__class__.__name__
 
 
 class Vector2D(Component):
@@ -64,11 +65,11 @@ class Animatable(Component):
 
 
 class Text(Component):
-    def __init__(self, form='{}', txt='', color=(0, 0, 0)):
+    def __init__(self, form='{}', txt='', color=(0, 0, 0), wrap=True):
         self.format_str = form
         self.text = txt
         self.dirty = True
-        self.wrap = True
+        self.wrap = wrap
         self.style = TextStyle(color)
         self.surface = None
         self.size = Vector2D(0, 0)

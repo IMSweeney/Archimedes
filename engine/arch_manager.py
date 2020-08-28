@@ -34,10 +34,14 @@ class ArchManager():
     def add_system(self, sys):
         self.system_manager.add_system(sys)
         self.add_entities_to_system(sys)
+        for sub in sys.subsystems:
+            self.add_system(sub)
 
     def add_entities_to_system(self, sys):
-        entities = self.ec_manager.get_entities_with_component_set(sys.component_types)
+        entities = self.ec_manager.get_entities_with_component_set(
+            sys.component_types)
         for guid, components in entities.items():
+            components = [comp for k, comp in components.items()]
             sys.add_entity(guid, components)
 
     def start(self, max_framerate=60):

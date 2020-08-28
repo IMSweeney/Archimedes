@@ -13,9 +13,6 @@ class SystemManager():
             self.add_event_listener(event_type, system)
         self.systems.append(system)
 
-        for subsystem in system.subsystems:
-            self.add_system(subsystem)
-
     def add_event_listener(self, event_type, system):
         if event_type not in self.event_listeners:
             self.event_listeners[event_type] = []

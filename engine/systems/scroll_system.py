@@ -4,6 +4,8 @@ from engine.components.components import *
 from engine import logger
 _logger = logger.Logger(__name__)
 
+from pygame.locals import KMOD_CTRL
+
 
 class ScrollSystem(system.System):
     def __init__(self, ec_manager):
@@ -26,10 +28,16 @@ class ScrollSystem(system.System):
 
     def scroll_entity(self, event, entity):
         scroll_comp = entity['Scrollable']
-        if event.button == 4:
-            scroll_comp.position.y -= self.SCROLL_FORCE
-        elif event.button == 5:
-            scroll_comp.position.y += self.SCROLL_FORCE
+        if event.mods & KMOD_CTRL:
+            if event.button == 4:
+                scroll_comp.position.x -= self.SCROLL_FORCE
+            elif event.button == 5:
+                scroll_comp.position.x += self.SCROLL_FORCE
+        else:
+            if event.button == 4:
+                scroll_comp.position.y -= self.SCROLL_FORCE
+            elif event.button == 5:
+                scroll_comp.position.y += self.SCROLL_FORCE
         self.clamp_scroll(entity)
 
     def clamp_scroll(self, entity):
@@ -38,8 +46,8 @@ class ScrollSystem(system.System):
         parent = self.get_parent_transform(entity)
 
         max_scroll = text.size - parent.size
-        scroll_pos.x = min(max(0, scroll_pos.x), max_scroll.x)
-        scroll_pos.y = min(max(0, scroll_pos.y), max_scroll.y)
+        scroll_pos.x = max(0, min(max(0, scroll_pos.x), max_scroll.x))
+        scroll_pos.y = max(0, min(max(0, scroll_pos.y), max_scroll.y))
 
     def element_has_focus(self, mouse_pos, transform):
         mouse_pos = Vector2D(mouse_pos[0], mouse_pos[1])

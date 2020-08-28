@@ -43,7 +43,8 @@ class InputHandler(system.System):
                 e = MouseButtonEvent(
                     pygame_event.pos,
                     pygame_event.button,
-                    pygame_event.type == MOUSEBUTTONDOWN
+                    pygame_event.type == MOUSEBUTTONDOWN,
+                    mods=pygame.key.get_mods()
                 )
                 self.event_manager.push_event(e)
                 # _logger.info(e)
@@ -86,11 +87,12 @@ class WindowResizeEvent(event.Event):
 
 
 class MouseButtonEvent(event.Event):
-    def __init__(self, pos, button, press):
+    def __init__(self, pos, button, press, mods=0):
         self.type = self.__class__.__name__
         self.pos = pos
         self.button = button
         self.press = press
+        self.mods = mods
 
 
 class MouseMotionEvent(event.Event):
