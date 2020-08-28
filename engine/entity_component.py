@@ -51,7 +51,7 @@ class EntityComponentManager():
         return self.database.loc[ids].to_dict(orient='records')
 
     def get_entity(self, eid):
-        return self.database.loc[eid].to_dict(orient='records')
+        return self.database.loc[eid].to_dict()
 
 
 class EntityManager():

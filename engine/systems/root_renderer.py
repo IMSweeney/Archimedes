@@ -17,7 +17,7 @@ class RootRenderer(system.System):
         )
         self.event_manager = event_manager
         pygame.init()
-        self.win_size = (640, 640)
+        self.win_size = (800, 640)
         self.window = pygame.display.set_mode(
             self.win_size, flags=pygame.RESIZABLE
         )

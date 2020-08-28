@@ -6,60 +6,57 @@ _logger = logger.Logger(__name__)
 
 import pygame
 
-import queue
-
 
 class TextRenderer(system.System):
-    def __init__(self):
+    def __init__(self, ec_manager):
         super().__init__(
             set(['UpdateEvent']),
             set([Text, Visual])
         )
-        self.fps_window = 10
-        self.tick_lengths = queue.Queue(maxsize=self.fps_window)
+        self.ec_manager = ec_manager
         self.font = pygame.font.SysFont('timesnewroman', 14)
 
     def process(self, e):
         if e.type == 'UpdateEvent':
-            self.update_fps(e.dt)
             for guid, components in self.entities.items():
                 self.render(components)
 
-    def update_fps(self, dt):
-        try:
-            self.tick_lengths.put_nowait(dt)
-        except queue.Full:
-            fps = self.calculate_fps()
-            list(self.entities.values())[0]['Text'].text = fps
-
-    def calculate_fps(self):
-        t = 0
-        while not self.tick_lengths.empty():
-            t += self.tick_lengths.get()
-        return self.fps_window / t * 1000
-
     def render(self, entity):
         text_comp = entity['Text']
-        # if not text_comp.dirty:
-        #     return
+        if not text_comp.dirty:
+            return
 
-        if text_comp.format_str == '{}':
-            text_comp.text = '{}\n{}'.format(
-                entity['UITransform'].position, entity['UITransform'].size
-            )
+        parent_size = self.get_parent_size(entity)
 
-        # text_comp.dirty = False
+        text_comp.dirty = False
         color = text_comp.style.color
         txt = text_comp.format_str.format(text_comp.text)
+
         lines = txt.split('\n')
         surfaces = []
         size = Vector2D(0, 0)
         for line in lines:
-            line_surface = self.font.render(line, True, color)
-            surfaces.append(line_surface)
-            line_size = self.font.size(line)
-            size.x = max(size.x, line_size[0])
-            size.y += line_size[1]
+            words = line.split(' ')
+            truncated_line = ''
+            for word in words:
+                next_width = self.font.size(truncated_line + word)[0]
+                if next_width > parent_size.x:
+                    line_surface = self.font.render(line, True, color)
+                    line_size = line_surface.get_rect().size
+                    surfaces.append(line_surface)
+                    size.x = max(size.x, line_size[0])
+                    size.y += line_size[1]
+                    truncated_line = ''
+                else:
+                    truncated_line += word
+
+            if truncated_line != '':
+                line_surface = self.font.render(line, True, color)
+                line_size = line_surface.get_rect().size
+
+                surfaces.append(line_surface)
+                size.x = max(size.x, line_size[0])
+                size.y += line_size[1]
 
         surface = pygame.Surface(size.to_tuple(), pygame.SRCALPHA)
         line_height = size.y / len(lines)
@@ -70,6 +67,13 @@ class TextRenderer(system.System):
         entity['Visual'].surface = surface
         entity['UITransform'].size = size
         entity['UITransform'].dirty = True
+
+    def get_parent_size(self, entity):
+        pid = entity['UIConstraints'].parentid
+        if pid:
+            return self.ec_manager.get_entity(pid)['UITransform'].size
+        else:
+            return Vector2D(100, 100)  # Hack for window as parent
 
 
 if __name__ == '__main__':

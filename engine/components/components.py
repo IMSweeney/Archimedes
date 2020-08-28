@@ -154,5 +154,15 @@ class Hoverable(Component):
         self.off_delay = off_delay
 
 
+class Scrollable(Component):
+    def __init__(self):
+        self.dragable = False
+
+
+class FPSDisplay(Component):
+    def __init__(self):
+        pass
+
+
 if __name__ == '__main__':
     pass

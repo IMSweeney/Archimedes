@@ -6,6 +6,7 @@ from engine.systems.player_control import PlayerControler
 from engine.systems.physics import PhysicsHandler
 from engine.systems.ui_interaction import UIInteraction
 from engine.systems.text_renderer import TextRenderer
+from engine.systems.FPS_system import FPSSystem
 
 from engine import tilefactory
 from engine import uifactory
@@ -15,7 +16,7 @@ class Game():
     def __init__(self):
         self.arch_manager = arch_manager.ArchManager()
         event_manager = self.arch_manager.event_manager
-        # ec_manager = self.arch_manager.ec_manager
+        ec_manager = self.arch_manager.ec_manager
 
         self.arch_manager.add_systems([
             InputHandler(event_manager),
@@ -24,7 +25,8 @@ class Game():
             PlayerControler(),
             PhysicsHandler(),
             UIInteraction(),
-            TextRenderer(),
+            TextRenderer(ec_manager),
+            FPSSystem(),
         ])
         world_generator = tilefactory.WorldGenerator(
             self.arch_manager,
