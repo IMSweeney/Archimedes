@@ -28,6 +28,20 @@ class Node():
         for node in self.children:
             node.show_tree(level + 2)
 
+    def __iter__(self):
+        for child in self.children:
+            for node in child:
+                yield node
+        yield self
+
+    def __contains__(self, item):
+        if self.guid == item:
+            return True
+        for child in self.children:
+            if item in child:
+                return True
+        return False
+
 
 class Tree(Node):
     def __init__(self):
@@ -42,7 +56,11 @@ class Tree(Node):
         super().add_element(guid, data, parentid)
 
     def __iter__(self):
-        return DepthFirst(self.children)
+        for child in self.children:
+            for node in child:
+                yield node
+        # yield self
+        # return DepthFirst(self.children)
 
 
 class DepthFirst():
@@ -59,6 +77,9 @@ class DepthFirst():
         self.stack += node.children
         return node
 
+    def add_children(self, node):
+        self.stack += node.children
+
 
 if __name__ == '__main__':
     t = Tree()
@@ -70,5 +91,4 @@ if __name__ == '__main__':
     for e in t:
         print(e)
 
-    for e in t:
-        print(e)
+    print(10 in t)
