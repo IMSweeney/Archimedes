@@ -21,7 +21,7 @@ class Game():
 
         self.arch_manager.add_systems([
             InputHandler(event_manager),
-            RootRenderer(event_manager),
+            RootRenderer(self.arch_manager),
             CameraManager(event_manager),
             PlayerControler(),
             PhysicsHandler(),

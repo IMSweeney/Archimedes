@@ -1,16 +1,15 @@
 class Node():
-    def __init__(self, guid, data, parent=None):
+    def __init__(self, guid, parent=None):
         self.parent = parent
         self.guid = guid
-        self.data = data
         self.children = []
 
-    def add_element(self, guid, data, parentid):
+    def add_element(self, guid, parentid):
         if self.guid == parentid:
-            node = Node(guid, data, parent=self)
+            node = Node(guid, parent=self)
             self.children.append(node)
         for child in self.children:
-            child.add_element(guid, data, parentid)
+            child.add_element(guid, parentid)
 
     def remove_element(self, guid):
         for child in self.children:
@@ -46,14 +45,13 @@ class Node():
 class Tree(Node):
     def __init__(self):
         self.guid = -1
-        self.data = None
         self.children = []
 
-    def add_element(self, guid, data, parentid=None):
+    def add_element(self, guid, parentid=None):
         if not parentid:
-            node = Node(guid, data)
+            node = Node(guid)
             self.children.append(node)
-        super().add_element(guid, data, parentid)
+        super().add_element(guid, parentid)
 
     def __iter__(self):
         for child in self.children:

@@ -156,6 +156,13 @@ class UIConstraints(Component):
         self.buffer_px = Vector2D(buffer_px, buffer_px)
 
 
+class UIGrid(Component):
+    def __init__(self, is_vertical=False, child_ids=[]):
+        self.is_vertical = is_vertical
+        self.children = child_ids
+        # self.
+
+
 class Hoverable(Component):
     def __init__(self, on_delay=0.5, off_delay=0.5):
         self.state = False

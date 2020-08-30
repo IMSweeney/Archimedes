@@ -10,12 +10,13 @@ _logger = logger.Logger(__name__)
 
 
 class RootRenderer(system.System):
-    def __init__(self, event_manager):
+    def __init__(self, arch_manager):
         super().__init__(
             set(['UpdateEvent', 'WindowQuitEvent', 'WindowResizeEvent']),
             set()
         )
-        self.event_manager = event_manager
+        self.event_manager = arch_manager.event_manager
+        self.ec_manager = arch_manager.ec_manager
         pygame.init()
         self.win_size = (800, 640)
         self.window = pygame.display.set_mode(
@@ -24,7 +25,7 @@ class RootRenderer(system.System):
         self.clear_surface()
 
         self.add_subsystem(WorldRenderer(self.window))
-        self.add_subsystem(UIRenderer(self.window))
+        self.add_subsystem(UIRenderer(self.window, self.ec_manager))
 
     def clear_surface(self):
         self.window.fill((0, 0, 0))

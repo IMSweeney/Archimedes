@@ -40,7 +40,7 @@ class EntityViewer(system.System):
         base_ui = self.create_base_ui()
 
         self.table_id = self.create_table(base_ui)
-        self.button1 = self.create_button(base_ui)
+        self.buttons = self.create_buttons(base_ui)
 
     def create_base_ui(self):
         e = self.ui_generator.generate_empty_ui(
@@ -64,18 +64,28 @@ class EntityViewer(system.System):
         self.arch_manager.attach_components(e, components)
         return e
 
-    def create_button(self, parentid):
-        e = self.ui_generator.generate_empty_ui(
+    def create_buttons(self, parentid):
+        base = self.ui_generator.gen_ui_container(
             pos=Vector2D(0, 0),
-            # size=Vector2D(1, .1),
+            size=Vector2D(1, .5),
             parentid=parentid
         )
-        components = [
-            Text(txt='Button', wrap=False),
-            Selectable()
-        ]
-        self.arch_manager.attach_components(e, components)
-        return e
+
+        child_ids = []
+        for i in range(5):
+            e = self.ui_generator.gen_grid_element(parentid=base)
+            components = [
+                Text(txt='Button {}'.format(i), wrap=False),
+                Selectable()
+            ]
+            self.arch_manager.attach_components(e, components)
+            child_ids.append(e)
+
+        self.arch_manager.attach_component(
+            base,
+            UIGrid(is_vertical=True, child_ids=child_ids)
+        )
+        return base
 
 
 class Timer():

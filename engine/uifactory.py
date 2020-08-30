@@ -61,6 +61,18 @@ class UIGenerator():
         eid = self.arch_manager.create_entity(components)
         return eid
 
+    def gen_grid_element(self, parentid=None):
+        base_size = (32, 32)
+        bg = pygame.Surface(base_size).convert()
+        bg.fill(self.bg_color)
+        bg.set_alpha(0)
+        components = [
+            Visual(bg),
+            UITransform(size=base_size, parentid=parentid),
+        ]
+        eid = self.arch_manager.create_entity(components)
+        return eid
+
     def gen_top_element(self):
         e = self.generate_empty_ui(
             pos=Vector2D(.5, 0),
