@@ -133,19 +133,19 @@ class Controlable(Component):
 
 
 class UITransform(Component):
-    def __init__(self, x=0, y=0, size=(0, 0)):
+    def __init__(self, x=0, y=0, size=(0, 0), parentid=None):
         self.position = Vector2D(x, y)
         self.size = Vector2D(size[0], size[1])
         self.dirty = True
+        self.parentid = parentid
 
 
 class UIConstraints(Component):
-    def __init__(self, parentid=None,
+    def __init__(self,
                  relative_pos=Vector2D(0, 0),
                  relative_size=None,
                  minimum_size=Vector2D(0, 0),
                  buffer_px=4):
-        self.parentid = parentid
         if not isinstance(relative_pos, Vector2D):
             raise TypeError('relative_pos must be Vector2D')
         if not isinstance(minimum_size, Vector2D):
@@ -169,19 +169,6 @@ class Scrollable(Component):
     def __init__(self):
         self.dragable = False
         self.position = Vector2D(0, 0)
-
-
-# class Clip(Component):
-#     def __init__(self):
-#         self.position = Vector2D(0, 0)
-#         self.size = Vector2D(0, 0)
-#         self.src_image = None
-
-#     def to_tuple(self):
-#         return (
-#             self.position.x, self.position.y,
-#             self.size.x, self.size.y
-#         )
 
 
 class FPSDisplay(Component):

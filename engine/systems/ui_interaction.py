@@ -1,9 +1,6 @@
 from engine import system
 from engine.components.components import *
 
-# from engine.systems.hover_system import HoverSystem
-# from engine.systems.scroll_system import ScrollSystem
-
 from engine import logger
 _logger = logger.Logger(__name__)
 
@@ -40,7 +37,7 @@ class UIInteractionUtils():
         return is_lt_lr and is_gt_ul
 
     def get_parent_transform(self, entity):
-        pid = entity['UIConstraints'].parentid
+        pid = entity['UITransform'].parentid
         if pid:
             return self.ec_manager.get_entity(pid)['UITransform']
         else:

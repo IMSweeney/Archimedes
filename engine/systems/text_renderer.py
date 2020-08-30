@@ -104,7 +104,7 @@ class TextRenderer(system.System):
         )
 
     def get_parent_transform(self, entity):
-        pid = entity['UIConstraints'].parentid
+        pid = entity['UITransform'].parentid
         if pid:
             return self.ec_manager.get_entity(pid)['UITransform']
         else:

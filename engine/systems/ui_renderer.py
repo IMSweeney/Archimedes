@@ -25,7 +25,7 @@ class UIRenderer(system.System):
         entity = {
             comp.__class__.__name__: comp for comp in components
         }
-        parentid = entity['UIConstraints'].parentid
+        parentid = entity['UITransform'].parentid
         self.entities.add_element(entityid, entity, parentid=parentid)
 
     def remove_entity(self, entityid):
@@ -104,6 +104,14 @@ class UIRenderer(system.System):
 
 
 class RelativeConstraintsManager(system.System):
+    def __init__(self, parent):
+        super().__init__(
+            set(['WindowResizeEvent']),
+            set([UITransform, Visual, UIConstraints])
+        )
+
+
+class GridConstraintManager(system.System):
     def __init__(self, parent):
         super().__init__(
             set(['WindowResizeEvent']),
