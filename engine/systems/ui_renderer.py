@@ -103,6 +103,14 @@ class UIRenderer(system.System):
             self.window.blit(surface, px_pos.to_tuple())
 
 
+class RelativeConstraintsManager(system.System):
+    def __init__(self, parent):
+        super().__init__(
+            set(['WindowResizeEvent']),
+            set([UITransform, Visual, UIConstraints])
+        )
+
+
 class InvalidResizeError(ValueError):
     pass
 

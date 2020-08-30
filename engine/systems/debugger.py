@@ -65,7 +65,7 @@ class EntityViewer(system.System):
         return e
 
     def create_button(self, parentid):
-        base = self.ui_generator.generate_empty_ui(
+        e = self.ui_generator.generate_empty_ui(
             pos=Vector2D(0, 0),
             # size=Vector2D(1, .1),
             parentid=parentid

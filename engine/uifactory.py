@@ -18,8 +18,8 @@ class UIGenerator():
         self.font_color = (255, 255, 255)
 
     def generate_ui_elements(self):
-        # self.gen_fps_element()
-        # self.gen_top_element()
+        self.gen_fps_element()
+        self.gen_top_element()
         # self.gen_entity_table()
         pass
 
