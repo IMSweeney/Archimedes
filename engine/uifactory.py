@@ -18,13 +18,14 @@ class UIGenerator():
         self.font_color = (255, 255, 255)
 
     def generate_ui_elements(self):
-        self.gen_fps_element()
-        self.gen_top_element()
+        # self.gen_fps_element()
+        # self.gen_top_element()
         # self.gen_entity_table()
+        pass
 
     def generate_empty_ui(self, pos=Vector2D(0, 0),
                           size=None, parentid=None):
-        base_size = (200, 200)
+        base_size = (32, 32)
         bg = pygame.Surface(base_size).convert()
         bg.fill(self.bg_color)
         bg.set_alpha(self.alpha)
@@ -42,22 +43,42 @@ class UIGenerator():
         eid = self.arch_manager.create_entity(components)
         return eid
 
-    def gen_entity_table(self):
-        e = self.generate_empty_ui(
-            pos=Vector2D(1, 0),
-            size=Vector2D(.2, 1)
-        )
-
+    def gen_ui_container(self, pos=Vector2D(0, 0),
+                         size=None, parentid=None):
+        base_size = (32, 32)
+        bg = pygame.Surface(base_size).convert()
+        bg.fill(self.bg_color)
+        bg.set_alpha(0)
+        # pygame.draw.rect(bg, self.border_color,
+        #                  bg.get_rect(), self.border_thickness)
         components = [
-            Visual(pygame.Surface((20, 20)).convert()),
-            UITransform(),
+            Visual(bg),
+            UITransform(size=base_size),
             UIConstraints(
-                parentid=e,
-                relative_pos=Vector2D(0, 0)
+                parentid=parentid,
+                relative_pos=pos,
+                relative_size=size
             ),
-            Text(txt=''),
         ]
-        self.arch_manager.create_entity(components)
+        eid = self.arch_manager.create_entity(components)
+        return eid
+
+    # def gen_entity_table(self):
+        # e = self.generate_empty_ui(
+        #     pos=Vector2D(1, 0),
+        #     size=Vector2D(.2, 1)
+        # )
+
+        # components = [
+        #     Visual(pygame.Surface((20, 20)).convert()),
+        #     UITransform(),
+        #     UIConstraints(
+        #         parentid=e,
+        #         relative_pos=Vector2D(0, 0)
+        #     ),
+        #     Text(txt=''),
+        # ]
+        # self.arch_manager.create_entity(components)
 
     def gen_top_element(self):
         e = self.generate_empty_ui(

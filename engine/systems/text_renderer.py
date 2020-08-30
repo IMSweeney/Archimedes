@@ -26,6 +26,8 @@ class TextRenderer(system.System):
             self.generate_text_surface(entity)
             entity['Text'].dirty = False
 
+        # if entity['UITransform'].dirty:
+            # self.clip_text_surface(entity)
         self.clip_text_surface(entity)
 
     def generate_text_surface(self, entity):
@@ -82,7 +84,7 @@ class TextRenderer(system.System):
         transform = entity['UITransform']
         visual = entity['Visual']
         parent = self.get_parent_transform(entity)
-        if parent.size.x == 0:
+        if parent.size.x == 0 or text_comp.size < parent.size:
             visual.surface = text_comp.surface
             visual.size = text_comp.size
             return

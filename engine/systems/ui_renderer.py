@@ -60,9 +60,11 @@ class UIRenderer(system.System):
             parent_pos = parent['UITransform'].position
             parent_size = parent['UITransform'].size
 
-        max_pos = (parent_pos + parent_size -
-                   transform.size -
-                   (2 * constraints.buffer_px))
+        max_pos = (
+            parent_pos + parent_size -
+            transform.size -
+            (2 * constraints.buffer_px))
+
         transform.position = (
             parent_pos + constraints.buffer_px +
             constraints.relative_pos * max_pos)

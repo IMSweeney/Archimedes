@@ -23,12 +23,13 @@ class UIInteraction(system.System):
         if e.type == 'MouseButtonEvent':
             for entity, components in self.entities.items():
                 if self.element_has_focus(e.pos, components['UITransform']):
-                    self.process_entity(e, components)
+                    self.process_entity(e, entity, components)
 
-    def process_entity(self, e, entity):
+    def process_entity(self, e, guid, entity):
         if e.button == 1 and e.press:
             entity['Selectable'].state = not entity['Selectable'].state
-            _logger.info(entity['Selectable'].state)
+            _logger.info('{:04d} -> {}'.format(
+                guid, entity['Selectable'].state))
 
     def element_has_focus(self, mouse_pos, transform):
         mouse_pos = Vector2D(mouse_pos[0], mouse_pos[1])

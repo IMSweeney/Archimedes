@@ -146,6 +146,10 @@ class UIConstraints(Component):
                  minimum_size=Vector2D(0, 0),
                  buffer_px=4):
         self.parentid = parentid
+        if not isinstance(relative_pos, Vector2D):
+            raise TypeError('relative_pos must be Vector2D')
+        if not isinstance(minimum_size, Vector2D):
+            raise TypeError('minimum_size must be Vector2D')
         self.relative_pos = relative_pos
         self.relative_size = relative_size
         self.minimum_size = minimum_size

@@ -17,6 +17,10 @@ class ArchManager():
         eid = self.ec_manager.create_entity()
         return eid
 
+    def attach_components(self, entid, components):
+        for comp in components:
+            self.attach_component(entid, comp)
+
     def attach_component(self, entid, comp):
         components = self.ec_manager.attach_component(entid, comp)
         self.system_manager.add_entity_to_systems(entid, components)

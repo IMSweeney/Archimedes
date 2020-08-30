@@ -19,7 +19,8 @@ class EntityViewer(system.System):
         self.ec_manager = arch_manager.ec_manager
         self.ui_generator = UIGenerator(arch_manager)
         self.timer = Timer(1000)
-        self.table_id = self.create_ui()
+
+        self.init_ui()
 
         pd.set_option('display.max_rows', 500)
         pd.set_option('display.max_columns', 500)
@@ -35,23 +36,46 @@ class EntityViewer(system.System):
         ent['Text'].text = self.ec_manager.database.head(100)
         ent['Text'].dirty = True
 
-    def create_ui(self):
+    def init_ui(self):
+        base_ui = self.create_base_ui()
+
+        self.table_id = self.create_table(base_ui)
+        self.button1 = self.create_button(base_ui)
+
+    def create_base_ui(self):
         e = self.ui_generator.generate_empty_ui(
             pos=Vector2D(1, 0),
             size=Vector2D(.3, 1)
         )
+        return e
+
+    def create_table(self, parentid):
+        e = self.ui_generator.gen_ui_container(
+            pos=Vector2D(0, 1),
+            size=Vector2D(1, .5),
+            parentid=parentid
+        )
 
         components = [
-            Visual(None),
-            UITransform(),
-            UIConstraints(
-                parentid=e,
-                relative_pos=Vector2D(0, 0)
-            ),
             Text(txt='', wrap=False),
             Scrollable()
         ]
-        return self.arch_manager.create_entity(components)
+
+        self.arch_manager.attach_components(e, components)
+        return e
+
+    def create_button(self, parentid):
+        base = self.ui_generator.generate_empty_ui(
+            pos=Vector2D(0, 0),
+            # size=Vector2D(1, .1),
+            parentid=parentid
+        )
+        components = [
+            Text(txt='Button', wrap=False),
+            Selectable()
+        ]
+        self.arch_manager.attach_components(e, components)
+        return e
 
 
 class Timer():
