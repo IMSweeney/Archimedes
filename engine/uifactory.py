@@ -63,7 +63,7 @@ class UIGenerator():
 
     def gen_grid_element(self, parentid=None):
         base_size = (32, 32)
-        bg = pygame.Surface(base_size).convert()
+        bg = pygame.Surface(base_size).convert_alpha()
         bg.fill(self.bg_color)
         bg.set_alpha(0)
         components = [

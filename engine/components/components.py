@@ -71,8 +71,6 @@ class Text(Component):
         self.dirty = True
         self.wrap = wrap
         self.style = TextStyle(color)
-        self.surface = None
-        self.size = Vector2D(0, 0)
 
 
 class TextStyle(Component):
@@ -133,11 +131,12 @@ class Controlable(Component):
 
 
 class UITransform(Component):
-    def __init__(self, x=0, y=0, size=(0, 0), parentid=None):
+    def __init__(self, x=0, y=0, size=(0, 0), parentid=None, layer=0):
         self.position = Vector2D(x, y)
         self.size = Vector2D(size[0], size[1])
         self.dirty = True
         self.parentid = parentid
+        self.layer = layer
 
 
 class UIConstraints(Component):
@@ -157,10 +156,11 @@ class UIConstraints(Component):
 
 
 class UIGrid(Component):
-    def __init__(self, is_vertical=False, child_ids=[]):
+    def __init__(self, child_ids=[],
+                 is_vertical=True, is_evenly_spaced=True):
         self.is_vertical = is_vertical
+        self.is_evenly_spaced = is_evenly_spaced
         self.children = child_ids
-        # self.
 
 
 class Hoverable(Component):
@@ -176,6 +176,8 @@ class Scrollable(Component):
     def __init__(self):
         self.dragable = False
         self.position = Vector2D(0, 0)
+        self.surface = None
+        self.size = Vector2D(0, 0)
 
 
 class FPSDisplay(Component):

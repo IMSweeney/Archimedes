@@ -136,13 +136,14 @@ class Scrolling(system.System):
             elif event.button == 5:
                 scroll_comp.position.y += self.SCROLL_FORCE
         self.clamp_scroll(entity)
+        entity['UITransform'].dirty = True
 
     def clamp_scroll(self, entity):
         scroll_pos = entity['Scrollable'].position
-        text = entity['Text']
+        size = entity['UITransform'].size
         parent = self.utils.get_parent_transform(entity)
 
-        max_scroll = text.size - parent.size
+        max_scroll = size - parent.size
         scroll_pos.x = max(0, min(max(0, scroll_pos.x), max_scroll.x))
         scroll_pos.y = max(0, min(max(0, scroll_pos.y), max_scroll.y))
 

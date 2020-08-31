@@ -20,6 +20,7 @@ class EntityViewer(system.System):
         self.ui_generator = UIGenerator(arch_manager)
         self.timer = Timer(1000)
 
+        self.MAX_ROWS = 10
         self.init_ui()
 
         pd.set_option('display.max_rows', 500)
@@ -33,7 +34,7 @@ class EntityViewer(system.System):
 
     def update_table(self):
         ent = self.ec_manager.get_entity(self.table_id)
-        ent['Text'].text = self.ec_manager.database.head(100)
+        ent['Text'].text = self.ec_manager.database.head(self.MAX_ROWS)
         ent['Text'].dirty = True
 
     def init_ui(self):
@@ -50,17 +51,20 @@ class EntityViewer(system.System):
         return e
 
     def create_table(self, parentid):
-        e = self.ui_generator.gen_ui_container(
+        base = self.ui_generator.gen_ui_container(
             pos=Vector2D(0, 1),
             size=Vector2D(1, .5),
             parentid=parentid
         )
 
+        e = self.ui_generator.gen_ui_container(
+            pos=Vector2D(0, 0),
+            parentid=base
+        )
         components = [
             Text(txt='', wrap=False),
-            Scrollable()
+            Scrollable(),
         ]
-
         self.arch_manager.attach_components(e, components)
         return e
 
@@ -83,7 +87,7 @@ class EntityViewer(system.System):
 
         self.arch_manager.attach_component(
             base,
-            UIGrid(is_vertical=True, child_ids=child_ids)
+            UIGrid(child_ids=child_ids, is_evenly_spaced=False)
         )
         return base
 

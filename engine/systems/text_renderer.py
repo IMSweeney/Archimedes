@@ -26,16 +26,11 @@ class TextRenderer(system.System):
             self.generate_text_surface(entity)
             entity['Text'].dirty = False
 
-        # if entity['UITransform'].dirty:
-            # self.clip_text_surface(entity)
-        self.clip_text_surface(entity)
-
     def generate_text_surface(self, entity):
         text_comp = entity['Text']
         parent_size = self.get_parent_transform(entity).size
 
         color = text_comp.style.color
-
         txt = text_comp.format_str.format(text_comp.text)
 
         if text_comp.wrap and parent_size.x != 0:
@@ -53,12 +48,13 @@ class TextRenderer(system.System):
             size.y += line_size[1]
 
         surface = pygame.Surface(size.to_tuple(), pygame.SRCALPHA)
+        surface.convert_alpha()
         line_height = size.y / len(lines)
         for i, line in enumerate(surfaces):
             surface.blit(line, (0, i * line_height))
 
-        entity['Text'].surface = surface
-        entity['Text'].size = size
+        entity['Visual'].surface = surface
+        entity['UITransform'].size = size
         entity['UITransform'].dirty = True
 
     def split_text_by_max_width(self, text, max_width):

@@ -20,7 +20,7 @@ class UIRenderer(system.System):
         self.win_size = Vector2D(size[0], size[1])
         self.entities = Tree()
 
-        self.contraint_manager = RelativeConstraintsManager(self)
+        self.contraint_manager = RelativeConstraintsManager()
         self.grid_manager = GridConstraintManager(self)
 
     def add_entity(self, entityid, components):
@@ -38,48 +38,63 @@ class UIRenderer(system.System):
     def process(self, e):
         if e.type == 'WindowResizeEvent':
             self.win_size = Vector2D(e.size[0], e.size[1])
-            for entity in self.entities:
-                entity.data['UITransform'].dirty = True
+            for node in self.entities:
+                entity = self.ec_manager.get_entity(node.guid)
+                entity['UITransform'].dirty = True
 
     def render(self):
-        for node in self.entities:
-            entity = self.ec_manager.get_entity(node.guid)
-            self.render_entity(entity, node.guid)
+        for child in self.entities.breadth_first():
+            entity = self.ec_manager.get_entity(child.guid)
+            self.process_entity(entity)
+            self.render_entity(entity)
 
-    def render_entity(self, entity, eid):
+    def process_entity(self, entity):
         if entity['UITransform'].dirty:
+            parent = self.get_parent(entity)
             if 'UIConstraints' in entity:
-                self.contraint_manager.process_entity(entity)
+                self.contraint_manager.process_entity(entity, parent)
             if 'UIGrid' in entity:
                 self.grid_manager.process_entity(entity)
+
+            self.calculate_clip(entity, parent)
             entity['UITransform'].dirty = False
 
-        self.draw_entity(entity, eid)
+    def calculate_clip(self, entity, parent):
+        parent_size = parent['UITransform'].size
 
-    def draw_entity(self, entity, eid):
-        surface = entity['Visual'].surface
-        px_pos = entity['UITransform'].position
-        if not surface:
-            _logger.warning('surface not initialized for {}'.format(
-                eid)
-            )
+        if 'Scrollable' in entity:
+            scroll_pos = entity['Scrollable'].position
         else:
-            self.window.blit(surface, px_pos.to_tuple())
+            scroll_pos = Vector2D(0, 0)
+        entity['UITransform'].clip = (
+            scroll_pos.x, scroll_pos.y,
+            parent_size.x, parent_size.y
+        )
+
+    def render_entity(self, entity):
+        clip = entity['UITransform'].clip
+        child_surface = entity['Visual'].surface
+        pos = entity['UITransform'].position
+        self.window.blit(child_surface, pos.to_tuple(), clip)
+
+    def get_parent(self, entity):
+        pid = entity['UITransform'].parentid
+        if pid:
+            parent_entity = self.ec_manager.get_entity(pid)
+        else:
+            parent_entity = {
+                'UITransform': UITransform(size=self.window.get_size())
+            }
+        return parent_entity
 
 
 class RelativeConstraintsManager():
-    def __init__(self, parent):
-        self.parent = parent
+    def __init__(self):
+        pass
 
-    def process_entity(self, entity):
-        pid = entity['UITransform'].parentid
-        if pid:
-            parent_entity = self.parent.ec_manager.get_entity(pid)
-            parent_pos = parent_entity['UITransform'].position
-            parent_size = parent_entity['UITransform'].size
-        else:
-            parent_pos = Vector2D(0, 0)
-            parent_size = self.parent.win_size
+    def process_entity(self, entity, parent):
+        parent_pos = parent['UITransform'].position
+        parent_size = parent['UITransform'].size
 
         self.scale_element(entity, parent_pos, parent_size)
         self.calculate_transform(entity, parent_pos, parent_size)

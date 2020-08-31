@@ -1,3 +1,6 @@
+import queue
+
+
 class Node():
     def __init__(self, guid, parent=None):
         self.parent = parent
@@ -60,6 +63,22 @@ class Tree(Node):
         # yield self
         # return DepthFirst(self.children)
 
+    def breadth_first(self):
+        stack = queue.Queue()
+        [stack.put(child) for child in self.children]
+        while not stack.empty():
+            node = stack.get()
+            [stack.put(c) for c in node.children]
+            yield node
+
+    # def depth_first(self):
+    #     stack = queue.Queue()
+    #     [stack.put(child) for child in self.children]
+    #     while not stack.empty():
+    #         node = stack.get()
+    #         [stack.put(c) for c in node.children]
+    #         yield node
+
 
 class DepthFirst():
     def __init__(self, elements):
@@ -81,12 +100,23 @@ class DepthFirst():
 
 if __name__ == '__main__':
     t = Tree()
-    t.add_element(1, '1')
-    t.add_element(2, '2')
-    t.add_element(10, '10', parentid=2)
+    t.add_element(1)
+    t.add_element(2)
+    t.add_element(20, parentid=2)
+    t.add_element(10, parentid=1)
 
-    t.show_tree()
-    for e in t:
-        print(e)
+    # t.show_tree()
+    # for e in t:
+    #     print(e)
+
+    s = []
+    for n in t.breadth_first():
+        s.append(n.guid)
+    assert s == [1, 2, 10, 20]
+
+    # s = []
+    # for n in t.depth_first():
+    #     s.append(n.guid)
+    # assert s == [1, 2, 10, 20]
 
     print(10 in t)
