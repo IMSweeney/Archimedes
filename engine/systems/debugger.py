@@ -27,6 +27,7 @@ class EntityViewer(system.System):
         pd.set_option('display.max_rows', 500)
         pd.set_option('display.max_columns', 500)
         pd.set_option('display.width', 1000)
+        pd.set_option('display.max_colwidth', None)
 
     def process(self, e):
         if e.type == 'UpdateEvent':
@@ -110,7 +111,6 @@ class EntityViewer(system.System):
             UIGrid(child_ids=child_ids, is_evenly_spaced=False),
             Scrollable()
         ])
-        _logger.info(child_ids)
         return child_ids
 
 

@@ -151,6 +151,7 @@ class GridConstraintManager():
     def process_entity(self, entity):
         grid = entity['UIGrid']
         transform = entity['UITransform']
+        _logger.info(transform)
 
         if len(grid.children) == 0:
             return
