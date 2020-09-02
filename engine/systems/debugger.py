@@ -38,6 +38,7 @@ class EntityViewer(system.System):
         self.update_buttons()
         active_cols = self.get_active_columns()
         df = self.ec_manager.database[active_cols]
+        df = df.dropna(how='all')
         ent['Text'].text = df.head(self.MAX_ROWS)
         ent['Text'].dirty = True
 

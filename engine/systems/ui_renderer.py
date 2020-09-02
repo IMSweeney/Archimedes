@@ -50,6 +50,7 @@ class UIRenderer(system.System):
             parent = self.get_parent(node)
             self.process_entity(entity, parent)
             self.render_entity(entity)
+            self.render_highlight(entity)
 
     def process_entity(self, entity, parent):
         if entity['UITransform'].dirty:
@@ -78,6 +79,18 @@ class UIRenderer(system.System):
         child_surface = entity['Visual'].surface
         pos = entity['UITransform'].position
         self.window.blit(child_surface, pos.to_tuple(), clip)
+
+    def render_highlight(self, entity):
+        if 'Selectable' not in entity:
+            return
+        elif not entity['Selectable'].highlight:
+            return
+        elif not entity['Selectable'].state:
+            return
+        transform = entity['UITransform']
+        surface = pygame.Surface(transform.size.to_tuple(), pygame.SRCALPHA)
+        pygame.draw.rect(surface, (0, 0, 0), surface.get_rect(), width=2)
+        self.window.blit(surface, transform.position.to_tuple())
 
     def get_parent(self, node):
         if node.parent.is_root():
