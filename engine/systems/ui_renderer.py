@@ -24,13 +24,15 @@ class UIRenderer(system.System):
         self.grid_manager = GridConstraintManager(self)
 
     def add_entity(self, entityid, components):
-        if entityid in self.entities:
-            return
         entity = {
             comp.__class__.__name__: comp for comp in components
         }
-        parentid = entity['UITransform'].parentid
-        self.entities.add_element(entityid, parentid=parentid)
+        if entityid in self.entities:
+            self.entities.update_data(entityid, entity)
+        else:
+            parentid = entity['UITransform'].parentid
+            self.entities.add_element(
+                entityid, entity, parentid=parentid)
 
     def remove_entity(self, entityid):
         self.entities.remove_element(entityid)
@@ -43,14 +45,14 @@ class UIRenderer(system.System):
                 entity['UITransform'].dirty = True
 
     def render(self):
-        for child in self.entities.breadth_first():
-            entity = self.ec_manager.get_entity(child.guid)
-            self.process_entity(entity)
+        for node in self.entities.breadth_first():
+            entity = node.data
+            parent = self.get_parent(node)
+            self.process_entity(entity, parent)
             self.render_entity(entity)
 
-    def process_entity(self, entity):
+    def process_entity(self, entity, parent):
         if entity['UITransform'].dirty:
-            parent = self.get_parent(entity)
             if 'UIConstraints' in entity:
                 self.contraint_manager.process_entity(entity, parent)
             if 'UIGrid' in entity:
@@ -77,14 +79,13 @@ class UIRenderer(system.System):
         pos = entity['UITransform'].position
         self.window.blit(child_surface, pos.to_tuple(), clip)
 
-    def get_parent(self, entity):
-        pid = entity['UITransform'].parentid
-        if pid:
-            parent_entity = self.ec_manager.get_entity(pid)
-        else:
+    def get_parent(self, node):
+        if node.parent.is_root():
             parent_entity = {
                 'UITransform': UITransform(size=self.window.get_size())
             }
+        else:
+            parent_entity = node.parent.data
         return parent_entity
 
 
@@ -138,26 +139,47 @@ class GridConstraintManager():
         grid = entity['UIGrid']
         transform = entity['UITransform']
 
+        if len(grid.children) == 0:
+            return
+
         if grid.is_vertical:
-            child_size = Vector2D(
-                transform.size.x,
-                transform.size.y / len(grid.children))
-            for i, child_id in enumerate(grid.children):
-                child = self.parent.ec_manager.get_entity(child_id)
-                child['UITransform'].size = child_size
-                child['UITransform'].position = Vector2D(
-                    transform.position.x,
-                    transform.position.y + child_size.y * i)
+            if grid.is_evenly_spaced:
+                child_size = Vector2D(
+                    transform.size.x,
+                    transform.size.y / len(grid.children))
+                for i, child_id in enumerate(grid.children):
+                    child = self.parent.ec_manager.get_entity(child_id)
+                    child['UITransform'].size = child_size
+                    child['UITransform'].position = Vector2D(
+                        transform.position.x,
+                        transform.position.y + child_size.y * i)
+            else:
+                offset = 0
+                for i, child_id in enumerate(grid.children):
+                    child = self.parent.ec_manager.get_entity(child_id)
+                    child['UITransform'].position = Vector2D(
+                        transform.position.x,
+                        transform.position.y + offset)
+                    offset += child['UITransform'].size.y
         else:
-            child_size = Vector2D(
-                transform.size.x / len(grid.children),
-                transform.size.y)
-            for i, child_id in enumerate(grid.children):
-                child = self.parent.ec_manager.get_entity(child_id)
-                child['UITransform'].size = child_size
-                child['UITransform'].position = Vector2D(
-                    transform.position.x + child_size.x * i,
-                    transform.position.y)
+            if grid.is_evenly_spaced:
+                child_size = Vector2D(
+                    transform.size.x / len(grid.children),
+                    transform.size.y)
+                for i, child_id in enumerate(grid.children):
+                    child = self.parent.ec_manager.get_entity(child_id)
+                    child['UITransform'].size = child_size
+                    child['UITransform'].position = Vector2D(
+                        transform.position.x + child_size.x * i,
+                        transform.position.y)
+            else:
+                offset = 0
+                for i, child_id in enumerate(grid.children):
+                    child = self.parent.ec_manager.get_entity(child_id)
+                    child['UITransform'].position = Vector2D(
+                        transform.position.x + offset,
+                        transform.position.y)
+                    offset += child['UITransform'].size.x
 
 
 class InvalidResizeError(ValueError):

@@ -101,6 +101,7 @@ class Clickable(Component):
 class Selectable(Clickable):
     def __init__(self):
         self.state = False
+        self.highlight = True
 
 
 class Camera(Component):

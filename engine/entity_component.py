@@ -49,6 +49,16 @@ class EntityComponentManager():
         except KeyError:  # if none of the components have an entity
             return {}
 
+    def get_entities_with(self, component_set, extra=[]):
+        if len(component_set) == 0:
+            return self.database
+        try:
+            comp_names = [comp.__name__ for comp in component_set]
+            entities = self.database.dropna(how='any', subset=comp_names)
+            return entities[comp_names + extra]
+        except KeyError:  # if none of the components have an entity
+            return {}
+
     def get_eid_comps_from_ids(self, ids):
         return self.database.loc[ids].to_dict(orient='index')
 
@@ -59,6 +69,9 @@ class EntityComponentManager():
         e = self.database.loc[eid]
         e = e.dropna()
         return e.to_dict()
+
+    def remove_entity(self, eid):
+        self.database.drop(eid)
 
 
 class EntityManager():

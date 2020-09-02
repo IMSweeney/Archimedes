@@ -48,6 +48,10 @@ class ArchManager():
             components = [comp for k, comp in components.items()]
             sys.add_entity(guid, components)
 
+    def remove_entity(self, entid):
+        self.ec_manager.remove_entity(entid)
+        self.system_manager.remove_entity(entid)
+
     def start(self, max_framerate=60):
         pg_clock = Clock()
         while True:

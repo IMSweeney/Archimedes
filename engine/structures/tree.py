@@ -2,17 +2,19 @@ import queue
 
 
 class Node():
-    def __init__(self, guid, parent=None):
+    def __init__(self, guid, data, parent=None):
         self.parent = parent
         self.guid = guid
+        self.data = data
         self.children = []
 
-    def add_element(self, guid, parentid):
+    def add_element(self, guid, data, parentid=None):
         if self.guid == parentid:
-            node = Node(guid, parent=self)
+            node = Node(guid, data, parent=self)
             self.children.append(node)
-        for child in self.children:
-            child.add_element(guid, parentid)
+        else:
+            for child in self.children:
+                child.add_element(guid, data, parentid)
 
     def remove_element(self, guid):
         for child in self.children:
@@ -20,6 +22,26 @@ class Node():
                 self.children.pop(child)
                 return
             child.remove_element(guid)
+
+    def is_root(self):
+        return not self.parent
+
+    def update_data(self, guid, data):
+        node = self.get_item(guid)
+        if node:
+            node.data = data
+            return guid
+        else:
+            return False
+
+    def get_item(self, guid):
+        if self.guid == guid:
+            return self
+        for child in self.children:
+            item = child.get_item(guid)
+            if item:
+                return item
+        return False
 
     def __repr__(self):
         return 'id: {}, {} children'.format(
@@ -47,14 +69,7 @@ class Node():
 
 class Tree(Node):
     def __init__(self):
-        self.guid = -1
-        self.children = []
-
-    def add_element(self, guid, parentid=None):
-        if not parentid:
-            node = Node(guid)
-            self.children.append(node)
-        super().add_element(guid, parentid)
+        super().__init__(None, None)
 
     def __iter__(self):
         for child in self.children:
@@ -100,18 +115,18 @@ class DepthFirst():
 
 if __name__ == '__main__':
     t = Tree()
-    t.add_element(1)
-    t.add_element(2)
-    t.add_element(20, parentid=2)
-    t.add_element(10, parentid=1)
+    t.add_element(1, '1')
+    t.add_element(2, '2')
+    t.add_element(20, '20', parentid=2)
+    t.add_element(10, '10', parentid=1)
 
-    # t.show_tree()
-    # for e in t:
-    #     print(e)
+    t.show_tree()
+    exit()
 
     s = []
     for n in t.breadth_first():
         s.append(n.guid)
+
     assert s == [1, 2, 10, 20]
 
     # s = []

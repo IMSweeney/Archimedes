@@ -21,6 +21,7 @@ class EntityViewer(system.System):
         self.timer = Timer(1000)
 
         self.MAX_ROWS = 10
+
         self.init_ui()
 
         pd.set_option('display.max_rows', 500)
@@ -34,14 +35,33 @@ class EntityViewer(system.System):
 
     def update_table(self):
         ent = self.ec_manager.get_entity(self.table_id)
-        ent['Text'].text = self.ec_manager.database.head(self.MAX_ROWS)
+        self.update_buttons()
+        active_cols = self.get_active_columns()
+        df = self.ec_manager.database[active_cols]
+        ent['Text'].text = df.head(self.MAX_ROWS)
         ent['Text'].dirty = True
 
-    def init_ui(self):
-        base_ui = self.create_base_ui()
+    def update_buttons(self):
+        df = self.ec_manager.database
+        if len(self.buttons) != len(df.columns):
+            for button in self.buttons:
+                self.arch_manager.remove_entity(button)
+            self.buttons = self.create_buttons(
+                self.base_ui, component_names=df.columns)
 
-        self.table_id = self.create_table(base_ui)
-        self.buttons = self.create_buttons(base_ui)
+    def get_active_columns(self):
+        buttons = self.ec_manager.get_entity_components_from_ids(self.buttons)
+        active_cols = [
+            button['Text'].text for button in buttons
+            if button['Selectable'].state
+        ]
+        return active_cols
+
+    def init_ui(self):
+        self.base_ui = self.create_base_ui()
+
+        self.table_id = self.create_table(self.base_ui)
+        self.buttons = self.create_buttons(self.base_ui)
 
     def create_base_ui(self):
         e = self.ui_generator.generate_empty_ui(
@@ -68,28 +88,29 @@ class EntityViewer(system.System):
         self.arch_manager.attach_components(e, components)
         return e
 
-    def create_buttons(self, parentid):
+    def create_buttons(self, parentid, component_names=[]):
         base = self.ui_generator.gen_ui_container(
             pos=Vector2D(0, 0),
-            size=Vector2D(1, .5),
+            size=Vector2D(1, .2),
             parentid=parentid
         )
 
         child_ids = []
-        for i in range(5):
+        for component_name in component_names:
             e = self.ui_generator.gen_grid_element(parentid=base)
             components = [
-                Text(txt='Button {}'.format(i), wrap=False),
+                Text(txt=component_name, wrap=False),
                 Selectable()
             ]
             self.arch_manager.attach_components(e, components)
             child_ids.append(e)
 
-        self.arch_manager.attach_component(
-            base,
-            UIGrid(child_ids=child_ids, is_evenly_spaced=False)
-        )
-        return base
+        self.arch_manager.attach_components(base, [
+            UIGrid(child_ids=child_ids, is_evenly_spaced=False),
+            Scrollable()
+        ])
+        _logger.info(child_ids)
+        return child_ids
 
 
 class Timer():
