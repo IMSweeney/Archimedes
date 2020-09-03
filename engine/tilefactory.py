@@ -74,6 +74,7 @@ class WorldGenerator():
             Position(0, 0),
             Tether(
                 surface=surface,
+                max_length=5,
                 head=player,
                 tail=Vector2D(0, 0))
         ]

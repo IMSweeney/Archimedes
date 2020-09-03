@@ -6,6 +6,7 @@ _logger = logger.Logger(__name__)
 
 
 import pygame
+import math
 
 
 class TetherSystem(system.System):
@@ -28,6 +29,8 @@ class TetherSystem(system.System):
     def process_entity(self, entity):
         half_tile = Vector2D(.5, -.5)
         tether = entity['Tether']
+
+        # Get head and tail entities
         head = None
         tail = None
         if not isinstance(tether.head, Vector2D):
@@ -35,6 +38,7 @@ class TetherSystem(system.System):
         if not isinstance(tether.tail, Vector2D):
             tail = self.ec_manager.get_entity(tether.tail)
 
+        # Get world positions for head and tail
         if head:
             head_pos = head['Position'].position + half_tile
         else:
@@ -45,6 +49,23 @@ class TetherSystem(system.System):
         else:
             tail_pos = tether.tail + half_tile
         tether.vect = head_pos - tail_pos
+
+        # Update physics
+        mag, ang = tether.vect.to_polar()
+        if (tether.max_length and mag > tether.max_length
+                and head and 'Physics' in head):
+            forces = head['Physics'].applied_forces
+            dot = forces.dot(tether.vect)
+            # Is it in tension
+            if dot < 0:
+                pass
+            else:
+                # Projection of force in tether direction
+                proj = (dot / (mag ** 2)) * tether.vect
+                _logger.info((forces, proj))
+                head['Physics'].applied_forces -= proj
+                # head['Physics'].applied_forces = Vector2D(0, 0)
+
         self.update_sprite_pos(entity, head_pos, tail_pos)
         pass
 
@@ -56,7 +77,6 @@ class TetherSystem(system.System):
         visual = entity['Visual']
         tether = entity['Tether']
         mag, ang = tether.vect.to_polar()
-        _logger.info([mag, ang])
 
         scaled = pygame.transform.smoothscale(
             tether.surface, (int(mag * self.tile_size), 4))

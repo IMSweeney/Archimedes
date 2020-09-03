@@ -26,6 +26,11 @@ class Vector2D(Component):
         ang = math.degrees(math.atan2(self.y, self.x))
         return (mag, ang)
 
+    def dot(self, other):
+        if not isinstance(other, Vector2D):
+            raise ValueError('can\'t dot with non vector')
+        return (self.x * other.x + self.y * other.y)
+
     def __sub__(self, other):
         return Vector2D(self.x - other.x, self.y - other.y)
 
