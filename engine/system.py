@@ -64,7 +64,12 @@ class System():
         self.subsystems.append(subsystem)
 
     def remove_entity(self, entityid):
-        self.entities.pop(entityid)
+        try:
+            self.entities.pop(entityid)
+        except KeyError:
+            # _logger.warning('can\'t remove {}, not in {}'.format(
+            #     entityid, self.__class__.__name__))
+            pass
 
     def process(self, e):
         raise NotImplementedError()

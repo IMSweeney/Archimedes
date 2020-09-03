@@ -158,9 +158,11 @@ class UIConstraints(Component):
 
 class UIGrid(Component):
     def __init__(self, child_ids=[],
-                 is_vertical=True, is_evenly_spaced=True):
+                 is_vertical=True, is_evenly_spaced=True,
+                 px_buffer=0):
         self.is_vertical = is_vertical
         self.is_evenly_spaced = is_evenly_spaced
+        self.px_buffer = px_buffer
         self.children = child_ids
 
 

@@ -20,7 +20,7 @@ class EntityViewer(system.System):
         self.ui_generator = UIGenerator(arch_manager)
         self.timer = Timer(1000)
 
-        self.MAX_ROWS = 10
+        self.MAX_ROWS = 30
 
         self.init_ui()
 
@@ -49,7 +49,7 @@ class EntityViewer(system.System):
             for button in self.buttons:
                 self.arch_manager.remove_entity(button)
             self.buttons = self.create_buttons(
-                self.base_ui, component_names=df.columns)
+                self.button_section, component_names=df.columns)
 
     def get_active_columns(self):
         buttons = self.ec_manager.get_entity_components_from_ids(self.buttons)
@@ -62,8 +62,20 @@ class EntityViewer(system.System):
     def init_ui(self):
         self.base_ui = self.create_base_ui()
 
+        self.button_section = self.ui_generator.gen_grid_element(
+            # size=Vector2D(1, .2),
+            parentid=self.base_ui)
+
         self.table_id = self.create_table(self.base_ui)
-        self.buttons = self.create_buttons(self.base_ui)
+
+        self.arch_manager.attach_components(self.base_ui, [
+            UIGrid(
+                child_ids=[self.button_section, self.table_id],
+                is_vertical=False, is_evenly_spaced=False,
+                px_buffer=20),
+        ])
+
+        self.buttons = []
 
     def create_base_ui(self):
         e = self.ui_generator.generate_empty_ui(
@@ -73,16 +85,14 @@ class EntityViewer(system.System):
         return e
 
     def create_table(self, parentid):
-        base = self.ui_generator.gen_ui_container(
-            pos=Vector2D(0, 1),
-            size=Vector2D(1, .5),
-            parentid=parentid
-        )
+        # e = self.ui_generator.gen_ui_container(
+        #     pos=Vector2D(0, .2),
+        #     size=Vector2D(1, .8),
+        #     parentid=parentid
+        # )
 
-        e = self.ui_generator.gen_ui_container(
-            pos=Vector2D(0, 0),
-            parentid=base
-        )
+        e = self.ui_generator.gen_grid_element(
+            parentid=parentid)
         components = [
             Text(txt='', wrap=False),
             Scrollable(),
@@ -91,15 +101,9 @@ class EntityViewer(system.System):
         return e
 
     def create_buttons(self, parentid, component_names=[]):
-        base = self.ui_generator.gen_ui_container(
-            pos=Vector2D(0, 0),
-            size=Vector2D(1, .2),
-            parentid=parentid
-        )
-
         child_ids = []
         for component_name in component_names:
-            e = self.ui_generator.gen_grid_element(parentid=base)
+            e = self.ui_generator.gen_grid_element(parentid=parentid)
             components = [
                 Text(txt=component_name, wrap=False),
                 Selectable()
@@ -107,8 +111,12 @@ class EntityViewer(system.System):
             self.arch_manager.attach_components(e, components)
             child_ids.append(e)
 
-        self.arch_manager.attach_components(base, [
-            UIGrid(child_ids=child_ids, is_evenly_spaced=False),
+        self.arch_manager.attach_components(parentid, [
+            UIGrid(
+                child_ids=child_ids,
+                is_vertical=True,
+                is_evenly_spaced=False,
+                px_buffer=4),
             Scrollable()
         ])
         return child_ids

@@ -48,11 +48,11 @@ class UIRenderer(system.System):
         for node in self.entities.breadth_first():
             entity = node.data
             parent = self.get_parent(node)
-            self.process_entity(entity, parent)
+            self.process_entity(entity, parent, node=node)
             self.render_entity(entity)
             self.render_highlight(entity)
 
-    def process_entity(self, entity, parent):
+    def process_entity(self, entity, parent, node=None):
         if entity['UITransform'].dirty:
             if 'UIConstraints' in entity:
                 self.contraint_manager.process_entity(entity, parent)
@@ -60,7 +60,7 @@ class UIRenderer(system.System):
                 self.grid_manager.process_entity(entity)
 
             self.calculate_clip(entity, parent)
-            entity['UITransform'].dirty = False
+            # entity['UITransform'].dirty = False
 
     def calculate_clip(self, entity, parent):
         parent_size = parent['UITransform'].size
@@ -151,8 +151,6 @@ class GridConstraintManager():
     def process_entity(self, entity):
         grid = entity['UIGrid']
         transform = entity['UITransform']
-        _logger.info(transform)
-
         if len(grid.children) == 0:
             return
 
@@ -169,12 +167,16 @@ class GridConstraintManager():
                         transform.position.y + child_size.y * i)
             else:
                 offset = 0
+                total_size = Vector2D(0, 0)
                 for i, child_id in enumerate(grid.children):
                     child = self.parent.ec_manager.get_entity(child_id)
                     child['UITransform'].position = Vector2D(
                         transform.position.x,
                         transform.position.y + offset)
-                    offset += child['UITransform'].size.y
+                    offset += child['UITransform'].size.y + grid.px_buffer
+                    total_size.y = offset
+                    total_size.x = max(
+                        total_size.x, child['UITransform'].size.x)
         else:
             if grid.is_evenly_spaced:
                 child_size = Vector2D(
@@ -188,12 +190,19 @@ class GridConstraintManager():
                         transform.position.y)
             else:
                 offset = 0
+                total_size = Vector2D(0, 0)
                 for i, child_id in enumerate(grid.children):
                     child = self.parent.ec_manager.get_entity(child_id)
                     child['UITransform'].position = Vector2D(
                         transform.position.x + offset,
                         transform.position.y)
-                    offset += child['UITransform'].size.x
+                    offset += child['UITransform'].size.x + grid.px_buffer
+                    total_size.y = max(
+                        total_size.y, child['UITransform'].size.y)
+                    total_size.x = offset
+
+        if 'UIConstraints' not in entity and not grid.is_evenly_spaced:
+            transform.size = total_size
 
 
 class InvalidResizeError(ValueError):

@@ -17,9 +17,9 @@ class Node():
                 child.add_element(guid, data, parentid)
 
     def remove_element(self, guid):
-        for child in self.children:
+        for i, child in enumerate(self.children):
             if child.guid == guid:
-                self.children.pop(child)
+                self.children.pop(i)
                 return
             child.remove_element(guid)
 
@@ -121,8 +121,8 @@ if __name__ == '__main__':
     t.add_element(10, '10', parentid=1)
 
     t.show_tree()
-    exit()
 
+    # -- Test breadth first
     s = []
     for n in t.breadth_first():
         s.append(n.guid)
@@ -134,4 +134,17 @@ if __name__ == '__main__':
     #     s.append(n.guid)
     # assert s == [1, 2, 10, 20]
 
-    print(10 in t)
+    # -- Test contains
+    assert 10 in t
+
+    # -- Test contains fail
+    assert 30 not in t
+
+    # -- Test update_data (and get item)
+    t.update_data(10, '10n')
+    assert t.get_item(10).data == '10n'
+
+    # -- Test remove_item
+    t.remove_element(20)
+    s = [n.guid for n in t.breadth_first()]
+    assert set(s) == set([1, 2, 10])
