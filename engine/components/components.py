@@ -1,3 +1,5 @@
+import math
+
 
 class Component():
     def __init__(self):
@@ -18,6 +20,11 @@ class Vector2D(Component):
             return (self.x, self.y)
         else:
             return (int(self.x), int(self.y))
+
+    def to_polar(self):
+        mag = (self.x ** 2 + self.y ** 2) ** (1 / 2)
+        ang = math.degrees(math.atan2(self.y, self.x))
+        return (mag, ang)
 
     def __sub__(self, other):
         return Vector2D(self.x - other.x, self.y - other.y)
@@ -186,6 +193,14 @@ class Scrollable(Component):
 class FPSDisplay(Component):
     def __init__(self):
         pass
+
+
+class Tether(Component):
+    def __init__(self, head, tail, max_length=None, surface=None):
+        self.max_length = max_length
+        self.head = head
+        self.tail = tail
+        self.surface = surface
 
 
 if __name__ == '__main__':

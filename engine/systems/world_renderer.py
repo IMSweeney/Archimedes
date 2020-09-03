@@ -40,7 +40,7 @@ class WorldRenderer(system.System):
             surface = entity['Visual'].surface
             position = entity['Position'].position
             px_pos = self.world_to_px_position(position)
-            self.window.blit(surface, (px_pos.x, px_pos.y))
+            self.window.blit(surface, px_pos.to_tuple())
 
     def world_to_px_position(self, world_pos):
         px_pos = (world_pos - self.camera_location) * self.tile_size

@@ -64,7 +64,20 @@ class WorldGenerator():
             CollisionBox(size=0.6),
             Selectable(),
         ]
-        self.arch_manager.create_entity(components)
+        return self.arch_manager.create_entity(components)
+
+    def generate_tether(self, player):
+        size = (self.tile_size, 4)
+        surface = pygame.Surface(size).convert_alpha()
+        components = [
+            Visual(surface),
+            Position(0, 0),
+            Tether(
+                surface=surface,
+                head=player,
+                tail=Vector2D(0, 0))
+        ]
+        return self.arch_manager.create_entity(components)
 
 
 if __name__ == '__main__':

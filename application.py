@@ -8,6 +8,7 @@ from engine.systems.ui_interaction import UIInteraction
 from engine.systems.text_renderer import TextRenderer
 from engine.systems.FPS_system import FPSSystem
 from engine.systems.debugger import EntityViewer
+from engine.systems.tether_system import TetherSystem
 
 from engine import tilefactory
 from engine import uifactory
@@ -19,6 +20,8 @@ class Game():
         event_manager = self.arch_manager.event_manager
         ec_manager = self.arch_manager.ec_manager
 
+        TILESIZE = 32
+
         self.arch_manager.add_systems([
             InputHandler(event_manager),
             RootRenderer(self.arch_manager),
@@ -29,13 +32,15 @@ class Game():
             TextRenderer(ec_manager),
             FPSSystem(),
             EntityViewer(self.arch_manager),
+            TetherSystem(self.arch_manager, TILESIZE),
         ])
         world_generator = tilefactory.WorldGenerator(
             self.arch_manager,
-            tile_size=32
+            tile_size=TILESIZE
         )
         world_generator.generate_random_map(40)
-        world_generator.generate_player()
+        p = world_generator.generate_player()
+        world_generator.generate_tether(p)
 
         ui_generator = uifactory.UIGenerator(self.arch_manager)
         ui_generator.generate_ui_elements()
