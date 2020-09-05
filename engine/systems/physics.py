@@ -65,9 +65,16 @@ class PhysicsHandler(system.System):
                 self.update_pos(guid, components, e.dt / 1000)
 
     def update_vel(self, entity, dt):
-        d = entity['Physics'].damping
-        entity['Physics'].velocity -= (entity['Physics'].velocity * d * dt)
-        entity['Physics'].velocity += (entity['Physics'].applied_forces * dt)
+        physics = entity['Physics']
+        d = physics.damping
+        physics.velocity -= (physics.velocity * d * dt)
+
+        total_force = Vector2D(0, 0)
+        for force in physics.applied_forces.values():
+            total_force += force
+        physics.total_force = total_force
+        physics.velocity += (total_force * dt)
+        # entity['Physics'].velocity += (entity['Physics'].applied_forces * dt)
 
     def update_pos(self, guid, entity, dt):
         NUM_STEPS = 16

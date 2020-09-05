@@ -125,7 +125,8 @@ class Physics(Component):
     def __init__(self, damping=10):
         self.damping = damping
         self.velocity = Vector2D(0, 0)
-        self.applied_forces = Vector2D(0, 0)
+        self.applied_forces = {}
+        self.total_force = Vector2D(0, 0)
 
 
 class CollisionBox(Component):
@@ -203,6 +204,8 @@ class FPSDisplay(Component):
 class Tether(Component):
     def __init__(self, head, tail, max_length=None, surface=None):
         self.max_length = max_length
+        self.k = 500
+        self.stretched = False
         self.head = head
         self.tail = tail
         self.surface = surface

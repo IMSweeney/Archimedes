@@ -26,14 +26,15 @@ class PlayerControler(system.System):
         elif e.type == 'KeyDownEvent':
             if e.key_code in self.move_keys:
                 for guid, components in self.entities.items():
-                    components['Physics'].applied_forces += (
-                        self.move_keys[e.key_code] * components['Controlable'].force)
+                    components['Physics'].applied_forces[e.key_code] = (
+                        self.move_keys[e.key_code] *
+                        components['Controlable'].force)
 
         elif e.type == 'KeyUpEvent':
             if e.key_code in self.move_keys:
                 for guid, components in self.entities.items():
-                    components['Physics'].applied_forces -= (
-                        self.move_keys[e.key_code] * components['Controlable'].force)
+                    components['Physics'].applied_forces.pop(
+                        e.key_code)
 
 
 if __name__ == '__main__':
