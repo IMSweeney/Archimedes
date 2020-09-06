@@ -3,6 +3,7 @@ from engine.components.components import *
 import pygame
 
 import random
+import os
 
 
 class WorldGenerator():
@@ -51,7 +52,9 @@ class WorldGenerator():
 
     def generate_player(self):
         size = (self.tile_size, self.tile_size)
-        sprite = r'assets\sprites\Player.png'
+        sprite_path = os.path.join('assets', 'sprites')
+        sprite = os.path.join(sprite_path, 'Player.png')
+        # sprite = r'assets\sprites\Player.png')
         surface = pygame.image.load(sprite).convert_alpha()
         surface = pygame.transform.smoothscale(surface, size)
 
