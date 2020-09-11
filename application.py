@@ -4,11 +4,13 @@ from engine.systems.root_renderer import RootRenderer
 from engine.systems.camera import CameraManager
 from engine.systems.player_control import PlayerControler
 from engine.systems.physics import PhysicsHandler
-from engine.systems.ui_interaction import UIInteraction
-from engine.systems.text_renderer import TextRenderer
-from engine.systems.FPS_system import FPSSystem
-from engine.systems.debugger import EntityViewer
-from engine.systems.tether_system import TetherSystem
+# from engine.systems.ui_interaction import UIInteraction
+# from engine.systems.text_renderer import TextRenderer
+# from engine.systems.FPS_system import FPSSystem
+# from engine.systems.debugger import EntityViewer
+# from engine.systems.tether_system import TetherSystem
+
+from engine.gui import UIManager
 
 from engine import tilefactory
 from engine import uifactory
@@ -18,7 +20,7 @@ class Game():
     def __init__(self):
         self.arch_manager = arch_manager.ArchManager()
         event_manager = self.arch_manager.event_manager
-        ec_manager = self.arch_manager.ec_manager
+        # ec_manager = self.arch_manager.ec_manager
 
         TILESIZE = 32
 
@@ -28,6 +30,7 @@ class Game():
             CameraManager(event_manager),
             PlayerControler(),
             PhysicsHandler(),
+            UIManager()
             # UIInteraction(ec_manager),
             # TextRenderer(ec_manager),
             # FPSSystem(),

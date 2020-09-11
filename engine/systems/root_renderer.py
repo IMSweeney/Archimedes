@@ -1,8 +1,8 @@
 from engine import system
 from engine.systems.world_renderer import WorldRenderer
-from engine.systems.ui_renderer import UIRenderer
+# from engine.systems.ui_renderer import UIRenderer
 
-from engine.gui import GUIManager
+from engine.gui import UIRenderer
 
 import pygame
 import pygame.locals
@@ -28,7 +28,7 @@ class RootRenderer(system.System):
 
         self.add_subsystem(WorldRenderer(self.window))
         # self.add_subsystem(UIRenderer(self.window, self.ec_manager))
-        self.add_subsystem(GUIManager(self.window))
+        self.add_subsystem(UIRenderer(self.window))
 
     def clear_surface(self):
         self.window.fill((0, 0, 0))
