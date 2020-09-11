@@ -12,6 +12,8 @@ class WorldGenerator():
         self.tile_size = tile_size
         self.tiles = []
 
+        self.sprite_path = os.path.join('assets', 'sprites')
+
     def generate_random_map(self, map_size):
         BORDER = 2
         tiles = []
@@ -52,8 +54,7 @@ class WorldGenerator():
 
     def generate_player(self):
         size = (self.tile_size, self.tile_size)
-        sprite_path = os.path.join('assets', 'sprites')
-        sprite = os.path.join(sprite_path, 'Player.png')
+        sprite = os.path.join(self.sprite_path, 'Player.png')
         # sprite = r'assets\sprites\Player.png')
         surface = pygame.image.load(sprite).convert_alpha()
         surface = pygame.transform.smoothscale(surface, size)
@@ -70,14 +71,22 @@ class WorldGenerator():
         return self.arch_manager.create_entity(components)
 
     def generate_tether(self, player):
-        size = (self.tile_size, 4)
-        surface = pygame.Surface(size).convert_alpha()
+        # surface = pygame.Surface(size).convert_alpha()
+        sprite = os.path.join(self.sprite_path, 'cable.png')
+        surface = pygame.image.load(sprite).convert_alpha()
+
+        tether_size = 0.5
+        size = (
+            int(self.tile_size * tether_size),
+            int(self.tile_size * tether_size))
+        # surface = pygame.transform.smoothscale(surface, size)
+
         components = [
             Visual(surface),
             Position(0, 0),
             Tether(
                 surface=surface,
-                max_length=5,
+                max_length=tether_size,
                 head=player,
                 tail=Vector2D(0, 0))
         ]

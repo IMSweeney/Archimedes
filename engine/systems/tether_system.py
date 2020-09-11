@@ -1,6 +1,8 @@
 from engine import system
 from engine.components.components import *
 
+from engine.tilefactory import WorldGenerator
+
 from engine import logger
 _logger = logger.Logger(__name__)
 
@@ -17,6 +19,8 @@ class TetherSystem(system.System):
         self.arch_manager = arch_manager
         self.ec_manager = arch_manager.ec_manager
         self.tile_size = tile_size
+
+        self.tilefactory = WorldGenerator(arch_manager, tile_size=tile_size)
 
     def process(self, e):
         if e.type == 'UpdateEvent':
@@ -49,14 +53,16 @@ class TetherSystem(system.System):
             tail_pos = tether.tail + half_tile
         tether.vect = head_pos - tail_pos
 
-        # Update physics
-        self.restrain_head_with_force(tether, head)
+        if head:
+            self.restrain_head_with_force(tether, head)
+        if tail:
+            self.restrain_tail_with_force(tether, tail)
 
         self.update_sprite_pos(entity, head_pos, tail_pos)
         pass
 
     def restrain_head_with_force(self, tether, head):
-        if not tether.max_length or not head or 'Physics' not in head:
+        if not tether.max_length or 'Physics' not in head:
             return
 
         mag, ang = tether.vect.to_polar()
@@ -71,6 +77,25 @@ class TetherSystem(system.System):
             tether.stretched = False
             try:
                 head['Physics'].applied_forces.pop('Tether')
+            except KeyError:
+                return
+
+    def restrain_tail_with_force(self, tether, tail):
+        if not tether.max_length or 'Physics' not in tail:
+            return
+
+        mag, ang = tether.vect.to_polar()
+        overshoot = mag - tether.max_length
+        if overshoot > 0:
+            tether.stretched = True
+            # Spring force in tether direction
+            spring_force = -1 * tether.k * overshoot
+            spring_force *= (tether.vect * (1 / mag))
+            tail['Physics'].applied_forces['Tether'] = -1 * spring_force
+        else:
+            tether.stretched = False
+            try:
+                tail['Physics'].applied_forces.pop('Tether')
             except KeyError:
                 return
 
@@ -104,10 +129,10 @@ class TetherSystem(system.System):
         tether = entity['Tether']
         mag, ang = tether.vect.to_polar()
 
-        if tether.stretched:
-            tether.surface.fill(pygame.Color('red'))
-        else:
-            tether.surface.fill(pygame.Color('black'))
+        # if tether.stretched:
+        #     tether.surface.fill(pygame.Color('red'))
+        # else:
+        #     tether.surface.fill(pygame.Color('black'))
 
         scaled = pygame.transform.smoothscale(
             tether.surface, (int(mag * self.tile_size), 4))

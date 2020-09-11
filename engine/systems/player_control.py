@@ -17,6 +17,7 @@ class PlayerControler(system.System):
             119: Vector2D(0, 1),
             115: Vector2D(0, -1),
         }
+        self.place_tether_key = 32  # Space
 
     def process(self, e):
         if e.type == 'UpdateEvent':
@@ -29,12 +30,18 @@ class PlayerControler(system.System):
                     components['Physics'].applied_forces[e.key_code] = (
                         self.move_keys[e.key_code] *
                         components['Controlable'].force)
+            elif e.key_code == self.place_tether_key:
+                self.place_tether_anchor()
 
         elif e.type == 'KeyUpEvent':
             if e.key_code in self.move_keys:
                 for guid, components in self.entities.items():
                     components['Physics'].applied_forces.pop(
                         e.key_code)
+
+    def place_tether_anchor(self):
+        for guid, components in self.entities.items():
+            _logger.info(components['Position'])
 
 
 if __name__ == '__main__':

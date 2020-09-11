@@ -24,7 +24,7 @@ class InputHandler(system.System):
                 e = KeyDownEvent(
                     pygame_event.key,
                     pygame_event.mod)
-                # _logger.info(e)
+                _logger.info(e)
                 self.event_manager.push_event(e)
 
             elif pygame_event.type == KEYUP:
