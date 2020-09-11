@@ -25,7 +25,7 @@ class UIManager(System):
 
         self.manager = PGManager.Instance().manager
 
-        self.fps = pgui.elements.UILabel(
+        self.fps = pgui.elements.UIButton(
             relative_rect=pygame.Rect(0, 0, 100, 20),
             text='Hi!',
             manager=self.manager,
