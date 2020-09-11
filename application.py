@@ -23,7 +23,7 @@ class Game():
         TILESIZE = 32
 
         self.arch_manager.add_systems([
-            InputHandler(event_manager),
+            InputHandler(event_manager),  # should always be first
             RootRenderer(self.arch_manager),
             CameraManager(event_manager),
             PlayerControler(),
