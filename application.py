@@ -28,11 +28,11 @@ class Game():
             CameraManager(event_manager),
             PlayerControler(),
             PhysicsHandler(),
-            UIInteraction(ec_manager),
-            TextRenderer(ec_manager),
-            FPSSystem(),
-            EntityViewer(self.arch_manager),
-            TetherSystem(self.arch_manager, TILESIZE),
+            # UIInteraction(ec_manager),
+            # TextRenderer(ec_manager),
+            # FPSSystem(),
+            # EntityViewer(self.arch_manager),
+            # TetherSystem(self.arch_manager, TILESIZE),
         ])
         world_generator = tilefactory.WorldGenerator(
             self.arch_manager,

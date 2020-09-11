@@ -25,7 +25,7 @@ class InputHandler(system.System):
                     pygame_event,
                     pygame_event.key,
                     pygame_event.mod)
-                _logger.info(e)
+                # _logger.info(e)
                 self.event_manager.push_event(e)
 
             elif pygame_event.type == KEYUP:
@@ -61,6 +61,17 @@ class InputHandler(system.System):
                 )
                 self.event_manager.push_event(e)
                 # _logger.info(e)
+
+            elif pygame_event.type == USEREVENT:
+                e = UserEvent(pygame_event)
+                self.event_manager.push_event(e)
+                _logger.info(e.pge)
+
+
+class UserEvent(event.Event):
+    def __init__(self, pygame_event):
+        self.type = self.__class__.__name__
+        self.pge = pygame_event
 
 
 class KeyEvent(event.Event):
