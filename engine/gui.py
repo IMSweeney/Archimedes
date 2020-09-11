@@ -7,6 +7,20 @@ import pygame_gui as pgui
 import pygame
 
 
+class UIFactory():
+    def __init__(self):
+        self.manager = PGManager.Instance().manager
+
+        self.default_rect = pygame.Rect(0, 0, 80, 20)
+
+    def create_element(self, details):
+        e = pgui.elements.ui_label.UILabel(
+            text=details['text'],
+            relative_rect=self.default_rect,
+            manager=self.manager)
+        return e
+
+
 class UIManager(System):
     def __init__(self):
         events = [
@@ -25,21 +39,9 @@ class UIManager(System):
 
         self.manager = PGManager.Instance().manager
 
-        self.fps = pgui.elements.UIButton(
-            relative_rect=pygame.Rect(0, 0, 100, 20),
-            text='Hi!',
-            manager=self.manager,
-            anchors={
-                'left': 'left',
-                'right': 'left',
-                'top': 'top',
-                'bottom': 'top',
-            })
-
     def process(self, e):
         if e.type == 'UpdateEvent':
             self.manager.update(e.dt / 1000)
-            self.fps.set_text('{}'.format(e.dt))
         elif e.type == 'WindowResizeEvent':
             self.win_size = e.size
         else:

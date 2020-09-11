@@ -1,6 +1,8 @@
 from engine import system
 from engine.components.components import *
 
+from engine.gui import UIFactory
+
 from engine import logger
 _logger = logger.Logger(__name__)
 
@@ -15,6 +17,9 @@ class FPSSystem(system.System):
         )
         self.FPS_WINDOW = 60
         self.tick_lengths = queue.Queue(maxsize=self.FPS_WINDOW)
+        ui_factory = UIFactory()
+        self.label = ui_factory.create_element(
+            {'text': 'FPS: '})
 
     def process(self, e):
         if e.type == 'UpdateEvent':
@@ -25,9 +30,8 @@ class FPSSystem(system.System):
             self.tick_lengths.put_nowait(dt)
         except queue.Full:
             fps = self.calculate_fps()
-            for e in self.entities.values():
-                e['Text'].text = fps
-                e['Text'].dirty = True
+            self.label.set_text(
+                'FPS: {:.0f}'.format(fps))
 
     def calculate_fps(self):
         t = 0

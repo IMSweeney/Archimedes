@@ -6,7 +6,7 @@ from engine.systems.player_control import PlayerControler
 from engine.systems.physics import PhysicsHandler
 # from engine.systems.ui_interaction import UIInteraction
 # from engine.systems.text_renderer import TextRenderer
-# from engine.systems.FPS_system import FPSSystem
+from engine.systems.FPS_system import FPSSystem
 # from engine.systems.debugger import EntityViewer
 # from engine.systems.tether_system import TetherSystem
 
@@ -30,10 +30,10 @@ class Game():
             CameraManager(event_manager),
             PlayerControler(),
             PhysicsHandler(),
-            UIManager()
+            UIManager(),
             # UIInteraction(ec_manager),
             # TextRenderer(ec_manager),
-            # FPSSystem(),
+            FPSSystem(),
             # EntityViewer(self.arch_manager),
             # TetherSystem(self.arch_manager, TILESIZE),
         ])
