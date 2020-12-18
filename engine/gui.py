@@ -6,6 +6,9 @@ _logger = logger.Logger(__name__)
 import pygame_gui as pgui
 import pygame
 
+import queue
+import matplotlib.pyplot as plt
+
 
 class UIManager(System):
     def __init__(self):
@@ -35,15 +38,30 @@ class UIManager(System):
                 'top': 'top',
                 'bottom': 'top',
             })
+        self.FPS_WINDOW = 60
+        self.frame_lengths = queue.Queue(maxsize=self.FPS_WINDOW)
 
     def process(self, e):
         if e.type == 'UpdateEvent':
             self.manager.update(e.dt / 1000)
-            self.fps.set_text('{}'.format(e.dt))
+            self.update_fps(e.dt)
         elif e.type == 'WindowResizeEvent':
             self.win_size = e.size
         else:
             self.manager.process_events(e.pge)
+
+    def update_fps(self, dt):
+        try:
+            self.frame_lengths.put_nowait(dt)
+        except queue.Full:
+            fps = self.calculate_fps()
+            self.fps.set_text('{:.0f}'.format(fps))
+
+    def calculate_fps(self):
+        t = 0
+        while not self.frame_lengths.empty():
+            t += self.frame_lengths.get()
+        return self.FPS_WINDOW / t * 1000
 
 
 class UIRenderer(System):

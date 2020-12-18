@@ -8,7 +8,7 @@ from engine.systems.physics import PhysicsHandler
 # from engine.systems.text_renderer import TextRenderer
 # from engine.systems.FPS_system import FPSSystem
 # from engine.systems.debugger import EntityViewer
-# from engine.systems.tether_system import TetherSystem
+from engine.systems.tether_system import TetherSystem
 
 from engine.gui import UIManager
 
@@ -30,7 +30,7 @@ class Game():
             CameraManager(event_manager),
             PlayerControler(),
             PhysicsHandler(),
-            UIManager()
+            UIManager(),
             # UIInteraction(ec_manager),
             # TextRenderer(ec_manager),
             # FPSSystem(),

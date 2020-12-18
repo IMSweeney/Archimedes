@@ -134,8 +134,9 @@ class TetherSystem(system.System):
         # else:
         #     tether.surface.fill(pygame.Color('black'))
 
+        px_thickness = min(int(tether.thickness * self.tile_size), 4)
         scaled = pygame.transform.smoothscale(
-            tether.surface, (int(mag * self.tile_size), 4))
+            tether.surface, (int(mag * self.tile_size), px_thickness))
         visual.surface = pygame.transform.rotate(
             scaled, ang).convert_alpha()
 

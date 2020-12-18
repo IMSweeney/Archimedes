@@ -209,6 +209,7 @@ class Tether(Component):
         self.head = head
         self.tail = tail
         self.surface = surface
+        self.thickness = (1 / 8)
 
 
 if __name__ == '__main__':

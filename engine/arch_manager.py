@@ -64,6 +64,7 @@ class ArchManager():
 
         for e in self.event_manager.get_events():
             for sys in self.system_manager.get_listeners(e.type):
+                _logger.debug('Processing {} with {}'.format(e, sys))
                 sys.process(e)
 
 
