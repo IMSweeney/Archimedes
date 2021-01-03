@@ -39,6 +39,7 @@ class SystemManager():
             if len(system.component_types) == 0:
                 continue
             if system.component_types.issubset(component_types):
+                _logger.info('adding {} to system {}'.format(entityid, system))
                 system.add_entity(entityid, components)
 
     def remove_entity(self, entityid):

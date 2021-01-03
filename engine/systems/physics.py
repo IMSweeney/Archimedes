@@ -73,7 +73,7 @@ class PhysicsHandler(system.System):
         for force in physics.applied_forces.values():
             total_force += force
         physics.total_force = total_force
-        physics.velocity += (total_force * dt)
+        physics.velocity += (total_force * dt) * (1 / physics.mass)
         # entity['Physics'].velocity += (entity['Physics'].applied_forces * dt)
 
     def update_pos(self, guid, entity, dt):
@@ -81,6 +81,13 @@ class PhysicsHandler(system.System):
         pos = entity['Position'].position
         v = entity['Physics'].velocity
 
+        if 'CollisionBox' not in entity:
+            # Simple movement if not collidable
+            pos.x += (v.x * dt)
+            pos.y += (v.y * dt)
+            return
+
+        # Otherwise move in steps unitl collision
         old_x = pos.x
         old_y = pos.y
 

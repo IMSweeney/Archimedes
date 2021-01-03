@@ -62,16 +62,27 @@ class EntityComponentManager():
     def get_eid_comps_from_ids(self, ids):
         return self.database.loc[ids].to_dict(orient='index')
 
-    def get_entity_components_from_ids(self, ids):
-        return self.database.loc[ids].to_dict(orient='records')
-
     def get_entity(self, eid):
         e = self.database.loc[eid]
-        e = e.dropna()
-        return e.to_dict()
+        e = e.dropna().to_dict()
+
+        return EntityRepresentation(eid, e)
 
     def remove_entity(self, eid):
         self.database.drop(eid)
+
+
+class EntityRepresentation():
+    def __init__(self, eid, components):
+        self.id = eid
+        for k, v in components.items():
+            self.__dict__[k] = v
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+    def __contains__(self, item):
+        return item in self.__dict__
 
 
 class EntityManager():

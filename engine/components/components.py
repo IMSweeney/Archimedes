@@ -122,7 +122,8 @@ class Camera(Component):
 
 
 class Physics(Component):
-    def __init__(self, damping=10):
+    def __init__(self, mass=1, damping=10):
+        self.mass = mass
         self.damping = damping
         self.velocity = Vector2D(0, 0)
         self.applied_forces = {}
@@ -210,6 +211,18 @@ class Tether(Component):
         self.tail = tail
         self.surface = surface
         self.thickness = (1 / 8)
+
+
+class TetherAnchor(Component):
+    def __init__(self, tether, stored_tethers=0):
+        self.tether = tether
+        self.stored_tethers = stored_tethers
+        self.retract_force = None
+
+
+class TetherNode(Component):
+    def __init__(self, tethers=[]):
+        self.tethers = tethers
 
 
 if __name__ == '__main__':

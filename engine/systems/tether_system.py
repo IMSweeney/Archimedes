@@ -1,8 +1,6 @@
 from engine import system
 from engine.components.components import *
 
-from engine.tilefactory import WorldGenerator
-
 from engine import logger
 _logger = logger.Logger(__name__)
 
@@ -11,16 +9,19 @@ import pygame
 
 
 class TetherSystem(system.System):
-    def __init__(self, arch_manager, tile_size):
+    def __init__(self, arch_manager, world_generator):
         super().__init__(
             set(['UpdateEvent']),
             set([Tether])
         )
         self.arch_manager = arch_manager
         self.ec_manager = arch_manager.ec_manager
-        self.tile_size = tile_size
+        self.world_generator = world_generator
+        self.tile_size = world_generator.tile_size
 
-        self.tilefactory = WorldGenerator(arch_manager, tile_size=tile_size)
+        self.add_subsystem(
+            TetherAnchorSystem(
+                arch_manager, world_generator))
 
     def process(self, e):
         if e.type == 'UpdateEvent':
@@ -129,16 +130,62 @@ class TetherSystem(system.System):
         tether = entity['Tether']
         mag, ang = tether.vect.to_polar()
 
-        # if tether.stretched:
-        #     tether.surface.fill(pygame.Color('red'))
-        # else:
-        #     tether.surface.fill(pygame.Color('black'))
+        if tether.stretched:
+            tether.surface.fill(pygame.Color('red'))
+        else:
+            tether.surface.fill(pygame.Color('black'))
 
-        px_thickness = min(int(tether.thickness * self.tile_size), 4)
-        scaled = pygame.transform.smoothscale(
-            tether.surface, (int(mag * self.tile_size), px_thickness))
+        # px_thickness = min(int(tether.thickness * self.tile_size), 4)
+        # scaled = pygame.transform.smoothscale(
+        #     tether.surface, (int(mag * self.tile_size), px_thickness))
         visual.surface = pygame.transform.rotate(
-            scaled, ang).convert_alpha()
+            tether.surface, ang).convert_alpha()
+
+
+class TetherAnchorSystem(system.System):
+    def __init__(self, arch_manager, world_generator):
+        super().__init__(
+            set(['UpdateEvent']),
+            set([TetherAnchor]),
+        )
+
+        self.arch_manager = arch_manager
+        self.ec_manager = arch_manager.ec_manager
+        self.world_generator = world_generator
+        self.tile_size = world_generator.tile_size
+
+    def process(self, e):
+        if e.type == 'UpdateEvent':
+            for guid, entity in self.entities.items():
+                self.process_entity(guid, entity)
+
+    def process_entity(self, guid, entity):
+        anchor = entity['TetherAnchor']
+        if not anchor.tether:
+            _logger.warning('Anchor with no cable: {}'.format(guid))
+            return
+
+        tether = self.ec_manager.get_entity(anchor.tether)
+        if tether['Tether'].stretched and anchor.stored_tethers > 0:
+            self.prepend_tether(guid, anchor, tether['Tether'])
+
+    def prepend_tether(self, anchor_id, anchor, tether):
+        tether_uid = self.world_generator.create_tether()
+        t = self.ec_manager.get_entity(tether_uid)
+        new_tether = t['Tether']
+
+        node_uid = self.world_generator.create_tether_node()
+        n = self.ec_manager.get_entity(node_uid)
+
+        # Add a tether at the base of anchor
+        print('{}\n{}'.format(new_tether, tether))
+
+        new_tether.tail = anchor_id
+        new_tether.head = node_uid
+        tether.tail = node_uid
+        anchor.tether = tether_uid
+
+        print('{}\n{}'.format(new_tether, tether))
 
 
 if __name__ == '__main__':

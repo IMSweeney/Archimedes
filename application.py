@@ -24,6 +24,11 @@ class Game():
 
         TILESIZE = 32
 
+        world_generator = tilefactory.WorldGenerator(
+            self.arch_manager,
+            tile_size=TILESIZE
+        )
+
         self.arch_manager.add_systems([
             InputHandler(event_manager),  # should always be first
             RootRenderer(self.arch_manager),
@@ -35,15 +40,12 @@ class Game():
             # TextRenderer(ec_manager),
             FPSSystem(),
             # EntityViewer(self.arch_manager),
-            # TetherSystem(self.arch_manager, TILESIZE),
+            TetherSystem(self.arch_manager, world_generator),
         ])
-        world_generator = tilefactory.WorldGenerator(
-            self.arch_manager,
-            tile_size=TILESIZE
-        )
+
         world_generator.generate_random_map(40)
         p = world_generator.generate_player()
-        world_generator.generate_tether(p)
+        world_generator.generate_tether_anchor(p)
 
         ui_generator = uifactory.UIGenerator(self.arch_manager)
         ui_generator.generate_ui_elements()
